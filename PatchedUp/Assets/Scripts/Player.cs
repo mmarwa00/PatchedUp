@@ -1,54 +1,67 @@
 using UnityEngine;
-
 public class Player : MonoBehaviour {
     [SerializeField] private float moveSpeed = 7f;
-    [SerializeField] private float jumpForce = 6f;
-    [SerializeField] private float groundDrag = 5f;
+    [SerializeField] private float jumpSpeed = 8f;
+    [SerializeField] private float gravity = 20f;
+    [SerializeField] private float dampening = 5f;
+    [SerializeField] private float jumpCooldown = 0.2f;
     [SerializeField] private GameInput gameInput;
     [SerializeField] private Transform orientation;
-
-    private Rigidbody rb;
+    private CharacterController controller;
+    private float jumpVelocity = 0f;
+    private bool isJumping = false;
+    private float jumpCooldownTimer = 0f;
     private bool isWalking;
-
+    private bool jumpRequested = false;
     private void Start() {
-        rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true;
+        controller = GetComponent<CharacterController>();
         gameInput.OnJumpAction += GameInput_OnJumpAction;
     }
-
     private void GameInput_OnJumpAction(object sender, System.EventArgs e) {
-        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        jumpRequested = true;
     }
-
     private void Update() {
-        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
-        Vector3 moveDir = orientation.forward * inputVector.y + orientation.right * inputVector.x;
-        moveDir.y = 0f;
+        HandleJumping();
+        Vector2 inputMovement = gameInput.GetMovementVectorNormalized();
+        Vector3 inputRightDirection = orientation.right;
+        Vector3 inputForwardDirection = orientation.forward;
+        inputRightDirection.y = 0f;
+        inputForwardDirection.y = 0f;
+        inputRightDirection.Normalize();
+        inputForwardDirection.Normalize();
 
-        isWalking = moveDir != Vector3.zero;
-    }
-
-    private void FixedUpdate() {
-        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
-        Vector3 moveDir = orientation.forward * inputVector.y + orientation.right * inputVector.x;
-        moveDir.y = 0f;
-
-        rb.AddForce(moveDir * moveSpeed * 10f, ForceMode.Force);
-
-        Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-        if (flatVel.magnitude > moveSpeed) {
-            Vector3 capped = flatVel.normalized * moveSpeed;
-            rb.linearVelocity = new Vector3(capped.x, rb.linearVelocity.y, capped.z);
+        // Gravity
+        if (controller.isGrounded && jumpVelocity < 0f) {
+            jumpVelocity = -2f;
+        }
+        else if (!controller.isGrounded) {
+            jumpVelocity -= gravity * Time.deltaTime;
         }
 
-        rb.linearVelocity = new Vector3(
-            rb.linearVelocity.x * (1f - groundDrag * Time.fixedDeltaTime),
-            rb.linearVelocity.y,
-            rb.linearVelocity.z * (1f - groundDrag * Time.fixedDeltaTime)
-        );
+        // Horizontal movement
+        Vector3 move = inputRightDirection * inputMovement.x * moveSpeed
+                     + inputForwardDirection * inputMovement.y * moveSpeed;
+        move.y = jumpVelocity;
+        isWalking = new Vector3(inputMovement.x, 0f, inputMovement.y) != Vector3.zero;
+        controller.Move(move * Time.deltaTime);
     }
-
     public bool IsWalking() {
         return isWalking;
+    }
+    void HandleJumping() {
+        if (controller.isGrounded && isJumping && jumpCooldownTimer <= 0f) {
+            isJumping = false;
+            jumpVelocity = 0f;
+        }
+        if (controller.isGrounded && !isJumping && jumpRequested) {
+            jumpVelocity = jumpSpeed;
+            jumpCooldownTimer = jumpCooldown;
+            isJumping = true;
+        }
+        jumpRequested = false;
+        if (jumpVelocity > 0f) {
+            jumpVelocity -= Time.deltaTime * 10f;
+        }
+        jumpCooldownTimer -= Time.deltaTime;
     }
 }
