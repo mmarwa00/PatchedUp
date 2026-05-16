@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a25b7ec183d744b18f71798431896527, type: 3}
+  m_Name: TwinkleTwinkle
+  m_EditorClassIdentifier: Assembly-CSharp::MelodyConfig
+  melodyName: TwinkleTwinkle
+  noteSequence: 00000000000000000400000004000000050000000500000004000000
+  playbackSpeed: 1
+  randomize: 0
+  randomLength: 5
+  avoidRepeat: 1

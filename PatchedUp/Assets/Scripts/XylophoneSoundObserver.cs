@@ -15,11 +15,13 @@ public class XylophoneSoundObserver:  MonoBehaviour
     private void OnEnable()
     {
         XylophoneEvents.OnPlayXylophoneKey += HandleXylophoneSound;
+        XylophoneEvents.OnPuzzleSuccess += PlayPuzzleSuccessSound;
     }
 
     private void OnDisable()
     {
         XylophoneEvents.OnPlayXylophoneKey -= HandleXylophoneSound;
+        XylophoneEvents.OnPuzzleSuccess -= PlayPuzzleSuccessSound;
     }
 
     private void HandleXylophoneSound(AudioClip clip, AudioMixerGroup audioMixerGroup)
@@ -29,5 +31,11 @@ public class XylophoneSoundObserver:  MonoBehaviour
         audioSource.outputAudioMixerGroup = audioMixerGroup;
         audioSource.PlayOneShot(clip);
         
+    }
+
+    private void PlayPuzzleSuccessSound(AudioClip clip, AudioMixerGroup audioMixerGroup)
+    {
+        audioSource.outputAudioMixerGroup = audioMixerGroup;
+        audioSource.PlayOneShot(clip);
     }
 }

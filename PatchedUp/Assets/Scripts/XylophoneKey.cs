@@ -7,6 +7,8 @@ public class XylophoneKey : MonoBehaviour
 {
     [SerializeField] private AudioClip audioClip;
     [SerializeField] private AudioMixerGroup audioMixerGroup;
+    [SerializeField] private int keyIndex;
+    [SerializeField] private XylophoneGlowEffect visualEffect;
     
     private AudioSource audioSource;
     private InputAction inputAction;
@@ -17,22 +19,30 @@ public class XylophoneKey : MonoBehaviour
     {
         this.inputAction = InputSystem.actions.FindAction("Interact");
     }
-    // void Awake()
-    // {
-    //     audioSource = GetComponent<AudioSource>();
-    //     audioSource.clip = audioClip;
-    // }
     private void Update()
     {
         if (inRange && this.inputAction.WasPressedThisFrame())
         {
+            XylophoneEvents.VisualEffect(keyIndex);
             XylophoneEvents.PlayXylophoneKey(audioClip, audioMixerGroup);
+            XylophoneEvents.PlayerNoteInput(keyIndex);
         }
     }
-    // private void PlayXylophoneKey()
-    // {
-    //     audioSource.PlayOneShot(audioClip);
-    // }
+
+    private void OnEnable()
+    {
+        XylophoneEvents.OnVisualEffect += HandleVisualEffect;
+    }
+
+    private void OnDisable()
+    {
+        XylophoneEvents.OnVisualEffect -= HandleVisualEffect;
+    }
+
+    private void HandleVisualEffect(int index)
+    {
+        if(index == keyIndex) visualEffect.PlayGlow();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
