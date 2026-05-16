@@ -21,7 +21,7 @@ namespace StarterAssets
 		[Tooltip("Acceleration and deceleration")]
         [SerializeField] private float SpeedChangeRate = 10.0f;
 
-		[Space(10)]
+        [Space(10)]
 		[Tooltip("The height the player can jump")]
         [SerializeField] private float JumpHeight = 1.2f;
 		[Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
@@ -74,6 +74,7 @@ namespace StarterAssets
 		private float _verticalVelocity;
 		private float _terminalVelocity = 53.0f;
         private bool _canMove = true;
+        private bool _isStunned = false;
 
         // timeout deltatime
         private float _jumpTimeoutDelta;
@@ -129,7 +130,15 @@ namespace StarterAssets
             _targetHeight = StandHeight;
 		}
 
-		private void Update()
+        public float MoveSpeedValue {
+            get => MoveSpeed;
+            set => MoveSpeed = value;
+        }
+        public float SprintSpeedValue {
+            get => SprintSpeed;
+            set => SprintSpeed = value;
+        }
+        private void Update()
 		{
 			JumpAndGravity();
 			GroundedCheck();
@@ -249,7 +258,7 @@ namespace StarterAssets
 				// reset the fall timeout timer
 				_fallTimeoutDelta = FallTimeout;
 
-                if (_verticalVelocity < StunFallSpeedThreshold) {
+                if (_verticalVelocity < StunFallSpeedThreshold && !_isStunned) {
                     StartCoroutine(StunCoroutine());
                 }
 
@@ -314,12 +323,16 @@ namespace StarterAssets
 		}
 
         private System.Collections.IEnumerator StunCoroutine() {
+
+            _isStunned = true;
             _canMove = false;
 
             yield return new WaitForSeconds(StunDuration);
 
             _canMove = true;
+            _isStunned = false;
         }
+
 
     }
 }
