@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c22f2d517ac77a438012104d70f3cd9, type: 3}
   m_Name: Child
   m_EditorClassIdentifier: Assembly-CSharp::ProfilePuzzleConfig
-  profileName: 
+  profileName: ChildProfile
   profileImage: {fileID: 0}
   questions: []
