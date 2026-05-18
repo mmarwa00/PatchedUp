@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "MelodyConfig", menuName = "Puzzles/Melody")]
 public class MelodyConfig : ScriptableObject

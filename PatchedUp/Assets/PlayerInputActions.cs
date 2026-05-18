@@ -1108,6 +1108,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ExitBook"",
+                    ""type"": ""Button"",
+                    ""id"": ""28dfcbdf-903c-4cd5-b308-b7fd1ce7afc2"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1174,6 +1183,28 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
                     ""action"": ""PreviousPage"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8069b596-daf5-4425-84a9-aa932199b160"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""ExitBook"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3b5c7d1f-1fa2-4491-a80e-65673d204d3f"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""ExitBook"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1271,6 +1302,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Book_OpenCloseBook = m_Book.FindAction("OpenCloseBook", throwIfNotFound: true);
         m_Book_NextPage = m_Book.FindAction("NextPage", throwIfNotFound: true);
         m_Book_PreviousPage = m_Book.FindAction("PreviousPage", throwIfNotFound: true);
+        m_Book_ExitBook = m_Book.FindAction("ExitBook", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -1735,6 +1767,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Book_OpenCloseBook;
     private readonly InputAction m_Book_NextPage;
     private readonly InputAction m_Book_PreviousPage;
+    private readonly InputAction m_Book_ExitBook;
     /// <summary>
     /// Provides access to input actions defined in input action map "Book".
     /// </summary>
@@ -1758,6 +1791,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Book/PreviousPage".
         /// </summary>
         public InputAction @PreviousPage => m_Wrapper.m_Book_PreviousPage;
+        /// <summary>
+        /// Provides access to the underlying input action "Book/ExitBook".
+        /// </summary>
+        public InputAction @ExitBook => m_Wrapper.m_Book_ExitBook;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1793,6 +1830,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @PreviousPage.started += instance.OnPreviousPage;
             @PreviousPage.performed += instance.OnPreviousPage;
             @PreviousPage.canceled += instance.OnPreviousPage;
+            @ExitBook.started += instance.OnExitBook;
+            @ExitBook.performed += instance.OnExitBook;
+            @ExitBook.canceled += instance.OnExitBook;
         }
 
         /// <summary>
@@ -1813,6 +1853,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @PreviousPage.started -= instance.OnPreviousPage;
             @PreviousPage.performed -= instance.OnPreviousPage;
             @PreviousPage.canceled -= instance.OnPreviousPage;
+            @ExitBook.started -= instance.OnExitBook;
+            @ExitBook.performed -= instance.OnExitBook;
+            @ExitBook.canceled -= instance.OnExitBook;
         }
 
         /// <summary>
@@ -2088,5 +2131,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPreviousPage(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ExitBook" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnExitBook(InputAction.CallbackContext context);
     }
 }

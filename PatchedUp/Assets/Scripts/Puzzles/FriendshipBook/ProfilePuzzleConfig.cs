@@ -15,4 +15,8 @@ public class ProfilePuzzleConfig : ScriptableObject
     public string profileName;
     public Sprite profileImage;
     public ProfileQuestion[] questions;
+    
+    [Header("Reward")]
+    public Sprite rewardSticker;
+    public AudioClip rewardSound;
 }
