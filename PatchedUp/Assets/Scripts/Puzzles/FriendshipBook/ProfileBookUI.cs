@@ -12,7 +12,7 @@ public class ProfileBookUI : MonoBehaviour
     [SerializeField] private GameObject canvasRoot;
     [SerializeField] private TMP_Text[] fieldLabels;
     [SerializeField] private TMP_InputField[] inputFields;
-    [SerializeField] private Image[] fieldBackgrounds; // for color-coded feedback
+    [SerializeField] private Image[] fieldBackgrounds;
     [SerializeField] private Image profileImage;
     [SerializeField] private Button submitButton;
     
@@ -34,7 +34,6 @@ public class ProfileBookUI : MonoBehaviour
         if (submitButton != null) submitButton.onClick.RemoveListener(HandleSubmit);
     }
     
-    /// <summary>Show the canvas and restore the player's saved progress.</summary>
     public void Show()
     {
         if (!initialized) InitializeFromConfig();
@@ -55,11 +54,7 @@ public class ProfileBookUI : MonoBehaviour
     private void InitializeFromConfig()
     {
         var config = controller.Config;
-        if (config == null)
-        {
-            Debug.LogError("ProfileBookUI: Controller has no config!");
-            return;
-        }
+        if (config == null) { return; }
         
         if (profileImage != null && config.profileImage != null)
             profileImage.sprite = config.profileImage;
@@ -94,7 +89,7 @@ public class ProfileBookUI : MonoBehaviour
             if (controller.IsFieldValidated(i))
             {
                 SetFieldColor(i, correctColor);
-                inputFields[i].interactable = false; // lock validated fields
+                inputFields[i].interactable = false;
             }
             else
             {
@@ -126,7 +121,7 @@ public class ProfileBookUI : MonoBehaviour
         
         var result = controller.Submit(answers);
         
-        // Update visuals based on result
+        
         for (int i = 0; i < count; i++)
         {
             if (result.validatedFields[i])

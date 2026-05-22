@@ -10,7 +10,6 @@ public class ProfilePuzzleController : MonoBehaviour
     
     public event Action OnPuzzleSolved;
     
-    // Persistent state — survives UI hide/show
     private string[] savedAnswers;
     private bool[] fieldValidated;
     private bool isSolved;
@@ -37,10 +36,6 @@ public class ProfilePuzzleController : MonoBehaviour
         savedAnswers[index] = answer;
     }
     
-    /// <summary>
-    /// Checks all submitted answers, marks correct ones as validated,
-    /// and returns the result. Already-validated fields stay validated.
-    /// </summary>
     public SubmitResult Submit(string[] currentAnswers)
     {
         if (isSolved) return new SubmitResult { wasAlreadySolved = true };
@@ -51,8 +46,6 @@ public class ProfilePuzzleController : MonoBehaviour
             
             if (IsAnswerAcceptable(currentAnswers[i], config.questions[i]))
                 fieldValidated[i] = true;
-            // Note: we don't unset validated fields on subsequent submits.
-            // Once a field is right, it stays right.
         }
         
         bool allCorrect = true;
