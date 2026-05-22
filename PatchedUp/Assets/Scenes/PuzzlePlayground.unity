@@ -1449,8 +1449,8 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 9b03c5ce7cd35ac45b782fbdcb8c572d, type: 2}
-  - {fileID: 2100000, guid: 994cb9cc3369e7046a93b91ab44ddfbb, type: 2}
-  - {fileID: 2100000, guid: 994cb9cc3369e7046a93b91ab44ddfbb, type: 2}
+  - {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
+  - {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2637,10 +2637,10 @@ SkinnedMeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 9b03c5ce7cd35ac45b782fbdcb8c572d, type: 2}
-  - {fileID: 2100000, guid: 994cb9cc3369e7046a93b91ab44ddfbb, type: 2}
-  - {fileID: 2100000, guid: 994cb9cc3369e7046a93b91ab44ddfbb, type: 2}
-  - {fileID: 2100000, guid: 994cb9cc3369e7046a93b91ab44ddfbb, type: 2}
-  - {fileID: 2100000, guid: 994cb9cc3369e7046a93b91ab44ddfbb, type: 2}
+  - {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
+  - {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
+  - {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
+  - {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2946,7 +2946,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 9b03c5ce7cd35ac45b782fbdcb8c572d, type: 2}
-  - {fileID: 2100000, guid: 994cb9cc3369e7046a93b91ab44ddfbb, type: 2}
+  - {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3276,10 +3276,10 @@ MonoBehaviour:
   - {fileID: 1924386701}
   materials:
   - {fileID: 2100000, guid: 9b03c5ce7cd35ac45b782fbdcb8c572d, type: 2}
-  - {fileID: 2100000, guid: 994cb9cc3369e7046a93b91ab44ddfbb, type: 2}
-  - {fileID: 2100000, guid: 994cb9cc3369e7046a93b91ab44ddfbb, type: 2}
-  - {fileID: 2100000, guid: 994cb9cc3369e7046a93b91ab44ddfbb, type: 2}
-  - {fileID: 2100000, guid: 994cb9cc3369e7046a93b91ab44ddfbb, type: 2}
+  - {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
+  - {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
+  - {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
+  - {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
   materialMappings:
   - materialType: 0
     mappings:
@@ -3355,16 +3355,16 @@ MonoBehaviour:
   - materialType: 7
     mappings: []
   pageData:
-  - material: {fileID: 2100000, guid: 994cb9cc3369e7046a93b91ab44ddfbb, type: 2}
-  - material: {fileID: 2100000, guid: 994cb9cc3369e7046a93b91ab44ddfbb, type: 2}
   - material: {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
   - material: {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
-  - material: {fileID: 2100000, guid: 994cb9cc3369e7046a93b91ab44ddfbb, type: 2}
+  - material: {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
+  - material: {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
+  - material: {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
   pages: []
   currentPageNumber: 1
   maxPagesTurningCount: 4
   deltaTime: 0
-  pageFillerMaterial: {fileID: 2100000, guid: 994cb9cc3369e7046a93b91ab44ddfbb, type: 2}
+  pageFillerMaterial: {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
 --- !u!4 &785596843
 Transform:
   m_ObjectHideFlags: 0
@@ -5608,6 +5608,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19b161220474a694c85ef60d2619ba70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  cupId: 0
 --- !u!65 &1304769767
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6328,7 +6329,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 9b03c5ce7cd35ac45b782fbdcb8c572d, type: 2}
-  - {fileID: 2100000, guid: 994cb9cc3369e7046a93b91ab44ddfbb, type: 2}
+  - {fileID: 2100000, guid: d9179ea3188d22e4cba830f11e91a505, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8690,6 +8691,7 @@ MonoBehaviour:
   - {fileID: 176426644}
   - {fileID: 951516922}
   audioClip: {fileID: 8300000, guid: ad1410843b68ee4448132cc56edcfbf9, type: 3}
+  audioMixerGroup: {fileID: 0}
 --- !u!1 &1949972683
 GameObject:
   m_ObjectHideFlags: 0
