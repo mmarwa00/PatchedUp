@@ -74,7 +74,5 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
-PatchedUp/Assets/Game Makers Sound Effects Kit Part 1/
-PatchedUp/Assets/Game Makers Sound Effects Kit Part 1.meta
-PatchedUp/Assets/EndlessBook/Demos/
-PatchedUp/Assets/EndlessBook/Demos.meta
+PatchedUp/Assets/AssetPackages/Game Makers Sound Effects Kit Part 1/
+PatchedUp/Assets/AssetPackages/Game Makers Sound Effects Kit Part 1.meta
