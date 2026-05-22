@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c22f2d517ac77a438012104d70f3cd9, type: 3}
+  m_Name: Child
+  m_EditorClassIdentifier: Assembly-CSharp::ProfilePuzzleConfig
+  profileName: ChildProfile
+  profileImage: {fileID: 0}
+  questions:
+  - fieldLabel: Name
+    acceptedAnswers:
+    - Lily
+    caseSensitive: 0
+    trimWhitespace: 1
+  - fieldLabel: Favorite Colour
+    acceptedAnswers:
+    - Purple
+    caseSensitive: 0
+    trimWhitespace: 1
+  - fieldLabel: Age
+    acceptedAnswers:
+    - 8
+    - Eighth
+    - Eigth
+    caseSensitive: 0
+    trimWhitespace: 1
+  - fieldLabel: My Mother's Name
+    acceptedAnswers:
+    - Rose
+    caseSensitive: 0
+    trimWhitespace: 1
+  - fieldLabel: My Father's Name
+    acceptedAnswers:
+    - Joe
+    caseSensitive: 0
+    trimWhitespace: 1
+  - fieldLabel: Birthday
+    acceptedAnswers:
+    - 18.05.2018
+    - 18/05/2018
+    - 05/18/2018
+    - 18.05
+    - 18/05
+    caseSensitive: 0
+    trimWhitespace: 1
+  - fieldLabel: Favorite Toy
+    acceptedAnswers:
+    - Teddy Bear
+    - Bear
+    - Teddy
+    caseSensitive: 0
+    trimWhitespace: 1
+  - fieldLabel: Placeholder
+    acceptedAnswers:
+    - 
+    caseSensitive: 0
+    trimWhitespace: 1
+  - fieldLabel: Placeholder
+    acceptedAnswers:
+    - 
+    caseSensitive: 0
+    trimWhitespace: 1
+  - fieldLabel: Placeholder
+    acceptedAnswers:
+    - 
+    caseSensitive: 0
+    trimWhitespace: 1
+  rewardSticker: {fileID: 0}
+  rewardSound: {fileID: 8300000, guid: ad1410843b68ee4448132cc56edcfbf9, type: 3}

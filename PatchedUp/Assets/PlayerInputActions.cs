@@ -1077,6 +1077,138 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Book"",
+            ""id"": ""125cc5c1-3df1-440c-82b6-041fe02cbcdd"",
+            ""actions"": [
+                {
+                    ""name"": ""OpenCloseBook"",
+                    ""type"": ""Button"",
+                    ""id"": ""7658439f-063b-4188-acb2-f9354a79287e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""NextPage"",
+                    ""type"": ""Button"",
+                    ""id"": ""29b1c433-a6cf-400e-a320-ab6d42abcda2"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PreviousPage"",
+                    ""type"": ""Button"",
+                    ""id"": ""99ad401b-f9b0-498f-a4fa-a0e754e2cf34"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ExitBook"",
+                    ""type"": ""Button"",
+                    ""id"": ""28dfcbdf-903c-4cd5-b308-b7fd1ce7afc2"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""b5506aa7-bc8c-4882-b144-5b62df3d340a"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""OpenCloseBook"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""86515172-cffa-44ec-aecd-a22f794cb169"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""OpenCloseBook"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""38f33b7a-80f0-4b65-8870-08a52079150b"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""NextPage"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6c0f09d3-02cf-48f2-ad19-5b3f3ffde74d"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""NextPage"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ed44b9be-c30e-4f45-baed-e2cacb9d2ee7"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PreviousPage"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0e60cbb9-6645-4f41-9647-7ad9cf6349a5"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""PreviousPage"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8069b596-daf5-4425-84a9-aa932199b160"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""ExitBook"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3b5c7d1f-1fa2-4491-a80e-65673d204d3f"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""ExitBook"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -1165,12 +1297,19 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+        // Book
+        m_Book = asset.FindActionMap("Book", throwIfNotFound: true);
+        m_Book_OpenCloseBook = m_Book.FindAction("OpenCloseBook", throwIfNotFound: true);
+        m_Book_NextPage = m_Book.FindAction("NextPage", throwIfNotFound: true);
+        m_Book_PreviousPage = m_Book.FindAction("PreviousPage", throwIfNotFound: true);
+        m_Book_ExitBook = m_Book.FindAction("ExitBook", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerInputActions.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Book.enabled, "This will cause a leak and performance issues, PlayerInputActions.Book.Disable() has not been called.");
     }
 
     /// <summary>
@@ -1621,6 +1760,135 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="UIActions" /> instance referencing this action map.
     /// </summary>
     public UIActions @UI => new UIActions(this);
+
+    // Book
+    private readonly InputActionMap m_Book;
+    private List<IBookActions> m_BookActionsCallbackInterfaces = new List<IBookActions>();
+    private readonly InputAction m_Book_OpenCloseBook;
+    private readonly InputAction m_Book_NextPage;
+    private readonly InputAction m_Book_PreviousPage;
+    private readonly InputAction m_Book_ExitBook;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Book".
+    /// </summary>
+    public struct BookActions
+    {
+        private @PlayerInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public BookActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Book/OpenCloseBook".
+        /// </summary>
+        public InputAction @OpenCloseBook => m_Wrapper.m_Book_OpenCloseBook;
+        /// <summary>
+        /// Provides access to the underlying input action "Book/NextPage".
+        /// </summary>
+        public InputAction @NextPage => m_Wrapper.m_Book_NextPage;
+        /// <summary>
+        /// Provides access to the underlying input action "Book/PreviousPage".
+        /// </summary>
+        public InputAction @PreviousPage => m_Wrapper.m_Book_PreviousPage;
+        /// <summary>
+        /// Provides access to the underlying input action "Book/ExitBook".
+        /// </summary>
+        public InputAction @ExitBook => m_Wrapper.m_Book_ExitBook;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Book; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="BookActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(BookActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="BookActions" />
+        public void AddCallbacks(IBookActions instance)
+        {
+            if (instance == null || m_Wrapper.m_BookActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_BookActionsCallbackInterfaces.Add(instance);
+            @OpenCloseBook.started += instance.OnOpenCloseBook;
+            @OpenCloseBook.performed += instance.OnOpenCloseBook;
+            @OpenCloseBook.canceled += instance.OnOpenCloseBook;
+            @NextPage.started += instance.OnNextPage;
+            @NextPage.performed += instance.OnNextPage;
+            @NextPage.canceled += instance.OnNextPage;
+            @PreviousPage.started += instance.OnPreviousPage;
+            @PreviousPage.performed += instance.OnPreviousPage;
+            @PreviousPage.canceled += instance.OnPreviousPage;
+            @ExitBook.started += instance.OnExitBook;
+            @ExitBook.performed += instance.OnExitBook;
+            @ExitBook.canceled += instance.OnExitBook;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="BookActions" />
+        private void UnregisterCallbacks(IBookActions instance)
+        {
+            @OpenCloseBook.started -= instance.OnOpenCloseBook;
+            @OpenCloseBook.performed -= instance.OnOpenCloseBook;
+            @OpenCloseBook.canceled -= instance.OnOpenCloseBook;
+            @NextPage.started -= instance.OnNextPage;
+            @NextPage.performed -= instance.OnNextPage;
+            @NextPage.canceled -= instance.OnNextPage;
+            @PreviousPage.started -= instance.OnPreviousPage;
+            @PreviousPage.performed -= instance.OnPreviousPage;
+            @PreviousPage.canceled -= instance.OnPreviousPage;
+            @ExitBook.started -= instance.OnExitBook;
+            @ExitBook.performed -= instance.OnExitBook;
+            @ExitBook.canceled -= instance.OnExitBook;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="BookActions.UnregisterCallbacks(IBookActions)" />.
+        /// </summary>
+        /// <seealso cref="BookActions.UnregisterCallbacks(IBookActions)" />
+        public void RemoveCallbacks(IBookActions instance)
+        {
+            if (m_Wrapper.m_BookActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="BookActions.AddCallbacks(IBookActions)" />
+        /// <seealso cref="BookActions.RemoveCallbacks(IBookActions)" />
+        /// <seealso cref="BookActions.UnregisterCallbacks(IBookActions)" />
+        public void SetCallbacks(IBookActions instance)
+        {
+            foreach (var item in m_Wrapper.m_BookActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_BookActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="BookActions" /> instance referencing this action map.
+    /// </summary>
+    public BookActions @Book => new BookActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -1834,5 +2102,41 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Book" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="BookActions.AddCallbacks(IBookActions)" />
+    /// <seealso cref="BookActions.RemoveCallbacks(IBookActions)" />
+    public interface IBookActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "OpenCloseBook" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnOpenCloseBook(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "NextPage" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNextPage(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "PreviousPage" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPreviousPage(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ExitBook" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnExitBook(InputAction.CallbackContext context);
     }
 }
