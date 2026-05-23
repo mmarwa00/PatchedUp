@@ -15,6 +15,7 @@ public class EnvironmentPuzzleObserver : MonoBehaviour
         EnvironmentPuzzleEvents.OnEnvironmentSound += HandleEnvironmentSound;
         EnvironmentPuzzleEvents.OnToggleLights += HandleLighting;
         EnvironmentPuzzleEvents.OnEnvironmentParticles += HandleParticles;
+        EnvironmentPuzzleEvents.OnPuzzleSuccess += PlayPuzzleSuccessSound;
     }
 
     private void OnDisable()
@@ -24,11 +25,22 @@ public class EnvironmentPuzzleObserver : MonoBehaviour
         EnvironmentPuzzleEvents.OnEnvironmentParticles -= HandleParticles;
     }
 
-    private void HandleEnvironmentSound(AudioClip clip, AudioMixerGroup audioGroup, Vector3 position)
+    private void HandleEnvironmentSound(AudioClip clip, AudioMixerGroup audioGroup, Vector3 position, bool isPlaying)
     {
-        audioSource.outputAudioMixerGroup = audioGroup;
-        audioSource.clip = clip;
-        audioSource.Play();
+        if (isPlaying)
+        {
+            audioSource.clip = clip;
+            audioSource.outputAudioMixerGroup = audioGroup;
+            audioSource.Stop();
+        }
+        else
+        {
+            audioSource.transform.position = position;
+            audioSource.outputAudioMixerGroup = audioGroup;
+            audioSource.clip = clip;
+            audioSource.Play(); 
+        }
+        
     }
 
     private void HandleLighting(Light lamp, bool on,  float minIntensity, float maxIntensity)
@@ -50,12 +62,20 @@ public class EnvironmentPuzzleObserver : MonoBehaviour
         if (isOn)
         {
             particles.Stop();
+            particles.Clear();
         }
         else
         {
             particles.Play();
         }
         
+    }
+    
+    private void PlayPuzzleSuccessSound(AudioClip clip, AudioMixerGroup audioMixerGroup,  Vector3 position)
+    {
+        audioSource.transform.position = position;
+        audioSource.outputAudioMixerGroup = audioMixerGroup;
+        audioSource.PlayOneShot(clip);
     }
 
     private IEnumerator LightsFlicker(Light lamp, float minIntensity, float maxIntensity)
