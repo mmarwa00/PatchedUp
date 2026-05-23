@@ -60,6 +60,10 @@ namespace StarterAssets
 
         private float _jumpTimeoutDelta;
         private float _fallTimeoutDelta;
+        
+        //Global movement state monitoring for environmental interaction puzzle
+        public enum PlayerMovementState {Idle, Walking, Sprinting, Crouching, CrouchWalking}
+        public PlayerMovementState CurrentMovementState { get; private set; }
 
 #if ENABLE_INPUT_SYSTEM
         private PlayerInput _playerInput;
@@ -179,8 +183,31 @@ namespace StarterAssets
         {
             if (_input == null) return;
 
-            float targetSpeed = _isCrouching ? CrouchSpeed : _input.sprint ? SprintSpeed : MoveSpeed;
-            if (_input.move == Vector2.zero) targetSpeed = 0.0f;
+            float targetSpeed = _isCrouching ? CrouchSpeed
+                  : _input.sprint ? SprintSpeed
+                  : MoveSpeed;
+
+            if (_input.move == Vector2.zero)
+            {
+                if (!_isCrouching)
+                {
+                    CurrentMovementState = PlayerMovementState.Idle;
+                }
+                
+                targetSpeed = 0.0f;
+            }
+            else if(_isCrouching)
+            {
+                CurrentMovementState = PlayerMovementState.CrouchWalking;
+            }
+            else if(_input.sprint)
+            {
+                CurrentMovementState = PlayerMovementState.Sprinting;
+            }
+            else
+            {
+                CurrentMovementState = PlayerMovementState.Walking;
+            }
 
             float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
             float speedOffset = 0.1f;
