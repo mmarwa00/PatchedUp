@@ -115,7 +115,6 @@ namespace StarterAssets
 
         private void Update()
         {
-            Debug.Log(CurrentMovementState);
             if (_input == null) return;
 
             Grounded = _controller.isGrounded;
