@@ -115,6 +115,7 @@ namespace StarterAssets
 
         private void Update()
         {
+            Debug.Log(CurrentMovementState);
             if (_input == null) return;
 
             Grounded = _controller.isGrounded;
@@ -192,6 +193,10 @@ namespace StarterAssets
                 if (!_isCrouching)
                 {
                     CurrentMovementState = PlayerMovementState.Idle;
+                }
+                else
+                {
+                    CurrentMovementState = PlayerMovementState.Crouching;
                 }
                 
                 targetSpeed = 0.0f;
