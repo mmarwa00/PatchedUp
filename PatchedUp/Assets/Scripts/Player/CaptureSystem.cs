@@ -6,7 +6,7 @@ public class CaptureSystem : MonoBehaviour
     private int _catchCount = 0;
     private FirstPersonController _controller;
     private CharacterController _characterController;
-    private Animator _animator; // <-- ADD THIS LINE
+    private Animator _animator;
     private bool _alreadyCaught = false;
 
     [SerializeField] private Transform respawnPoint;
@@ -15,7 +15,7 @@ public class CaptureSystem : MonoBehaviour
     {
         _controller = GetComponent<FirstPersonController>();
         _characterController = GetComponent<CharacterController>();
-        _animator = GetComponentInChildren<Animator>(); // <-- ADD THIS LINE
+        _animator = GetComponentInChildren<Animator>();
     }
 
     public void OnCaught()

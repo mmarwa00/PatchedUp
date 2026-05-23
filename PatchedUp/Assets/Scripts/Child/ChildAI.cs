@@ -16,7 +16,7 @@ public class ChildAI : MonoBehaviour {
     [SerializeField] private LayerMask playerLayer;
 
     [Header("Capture")]
-    [SerializeField] private float captureDistance = 1.0f;
+    [SerializeField] private float captureDistance = 6.0f;
 
     private NavMeshAgent _agent;
     private GameObject _player;
@@ -33,11 +33,12 @@ public class ChildAI : MonoBehaviour {
 
         if (_playerDetected) {
             Chase();
-            TryCapture();
+            //TryCapture();
         }
         else {
             Patrol();
         }
+
     }
 
     private bool CanSeePlayer() {
@@ -62,9 +63,15 @@ public class ChildAI : MonoBehaviour {
         _agent.SetDestination(_player.transform.position);
     }
 
-    private void TryCapture() {
+    /*private void TryCapture() {
         float dist = Vector3.Distance(transform.position, _player.transform.position);
         if (dist <= captureDistance) {
+            _captureSystem.OnCaught();
+        }
+    }*/
+
+    private void OnTriggerEnter(Collider other) {
+        if (other.CompareTag("Player")) {
             _captureSystem.OnCaught();
         }
     }
