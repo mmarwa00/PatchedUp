@@ -85,6 +85,10 @@ namespace StarterAssets
         // crouching
         private float _targetHeight;
         private bool _isCrouching;
+        
+        //Global movement state monitoring for environmental interaction puzzle
+        public enum PlayerMovementState {Idle, Walking, Sprinting, Crouching, CrouchWalking}
+        public PlayerMovementState CurrentMovementState { get; private set; }
 
 #if ENABLE_INPUT_SYSTEM
         private PlayerInput _playerInput;
@@ -186,6 +190,7 @@ namespace StarterAssets
 
             if (_input.crouch && !_isCrouching)
             {
+                CurrentMovementState = PlayerMovementState.Crouching;
                 _isCrouching = true;
                 _controller.height = CrouchHeight;
                 _controller.center = new Vector3(0, CrouchHeight / 2f, 0);
@@ -193,6 +198,7 @@ namespace StarterAssets
             }
             else if (!_input.crouch && _isCrouching)
             {
+                CurrentMovementState = PlayerMovementState.Idle;
                 _isCrouching = false;
                 _controller.height = StandHeight;
                 _controller.center = new Vector3(0, StandCenter, 0);
@@ -210,7 +216,28 @@ namespace StarterAssets
                   : _input.sprint ? SprintSpeed
                   : MoveSpeed;
 
-            if (_input.move == Vector2.zero) targetSpeed = 0.0f;
+            if (_input.move == Vector2.zero)
+            {
+                if (!_isCrouching)
+                {
+                    CurrentMovementState = PlayerMovementState.Idle;
+                }
+                
+                targetSpeed = 0.0f;
+            }
+            else if(_isCrouching)
+            {
+                CurrentMovementState = PlayerMovementState.CrouchWalking;
+            }
+            else if(_input.sprint)
+            {
+                CurrentMovementState = PlayerMovementState.Sprinting;
+            }
+            else
+            {
+                CurrentMovementState = PlayerMovementState.Walking;
+            }
+            
 
             float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
             float speedOffset = 0.1f;
