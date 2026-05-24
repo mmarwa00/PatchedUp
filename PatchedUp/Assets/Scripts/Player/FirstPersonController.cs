@@ -55,11 +55,11 @@ namespace StarterAssets {
         [SerializeField] private float StandCenter = 2.15f;
         [SerializeField] private float CrouchSpeed = 2.0f;
         [SerializeField] private float CrouchCameraY = 1.8f;
-        [SerializeField] private float StandCameraY = 4.0f;
+        [SerializeField] private float StandCameraY = 4.4f;
 
         // Stun System
         [Header("Stun Settings")]
-        [SerializeField] private float StunFallSpeedThreshold = -12.0f;
+        [SerializeField] private float StunFallSpeedThreshold = -25.0f;
         [SerializeField] private float StunDuration = 1.5f;
 
         // animatior
@@ -193,7 +193,7 @@ namespace StarterAssets {
                 _isCrouching = false;
                 _controller.height = StandHeight;
                 _controller.center = new Vector3(0, StandCenter, 0);
-                CinemachineCameraTarget.transform.localPosition = new Vector3(0, StandCameraY, 0.15f);
+                CinemachineCameraTarget.transform.localPosition = new Vector3(0, StandCameraY, 1.4f);
 
                 _input.crouch = false;
             }
@@ -277,9 +277,9 @@ namespace StarterAssets {
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
 
-                    if (_animator != null) {
+                    /*if (_animator != null) {
                         _animator.SetTrigger("NormalJump");
-                    }
+                    }*/
                 }
 
                 // jump timeout
