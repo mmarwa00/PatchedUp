@@ -57,11 +57,11 @@ namespace StarterAssets
         [SerializeField] private float StandCenter = 2.15f;
         [SerializeField] private float CrouchSpeed = 2.0f;
         [SerializeField] private float CrouchCameraY = 1.8f;
-        [SerializeField] private float StandCameraY = 4.0f;
+        [SerializeField] private float StandCameraY = 4.4f;
 
         // Stun System
         [Header("Stun Settings")]
-        [SerializeField] private float StunFallSpeedThreshold = -12.0f;
+        [SerializeField] private float StunFallSpeedThreshold = -25.0f;
         [SerializeField] private float StunDuration = 1.5f;
 
         [Header("Visuals")]
@@ -209,7 +209,12 @@ namespace StarterAssets
                 _isCrouching = false;
                 _controller.height = StandHeight;
                 _controller.center = new Vector3(0, StandCenter, 0);
+<<<<<<< HEAD
                 CinemachineCameraTarget.transform.localPosition = new Vector3(0, StandCameraY, 0.15f);
+=======
+                CinemachineCameraTarget.transform.localPosition = new Vector3(0, StandCameraY, 1.4f);
+
+>>>>>>> 38e908af7408b35af562baf4607fbad264c42497
                 _input.crouch = false;
             }
         }
@@ -304,6 +309,7 @@ namespace StarterAssets
                     _verticalVelocity = -8f;
                 }
 
+<<<<<<< HEAD
                 // FIX 2: INSTANT JUMP - Removed the _jumpTimeoutDelta check
                 // Now you can jump IMMEDIATELY when grounded, no waiting!
                 if (_input.jump && _canMove)
@@ -316,6 +322,16 @@ namespace StarterAssets
 
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
                     _jumpTimeoutDelta = JumpTimeout; // Reset timeout AFTER jump
+=======
+                // Jump
+                if (_input.jump && _jumpTimeoutDelta <= 0.0f && _canMove) {
+                    // the square root of H * -2 * G = how much velocity needed to reach desired height
+                    _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+
+                    /*if (_animator != null) {
+                        _animator.SetTrigger("NormalJump");
+                    }*/
+>>>>>>> 38e908af7408b35af562baf4607fbad264c42497
                 }
 
                 if (_jumpTimeoutDelta >= 0.0f)
