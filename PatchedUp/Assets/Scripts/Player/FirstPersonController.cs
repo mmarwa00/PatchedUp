@@ -179,17 +179,22 @@ namespace StarterAssets
 
         private void CameraRotation()
         {
+            // HYBRID CONTROL:
+            // Mouse Y = tilt head UP/DOWN (to look at high obstacles)
+            // Mouse X = IGNORED (body rotation handled by WASD in Move())
+
             if (_input.look.sqrMagnitude >= _threshold)
             {
                 float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
+                // ONLY process vertical look (Y axis)
                 _cinemachineTargetPitch += _input.look.y * RotationSpeed * deltaTimeMultiplier;
-                _rotationVelocity = _input.look.x * RotationSpeed * deltaTimeMultiplier;
-
                 _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
+
+                // Apply ONLY vertical rotation (pitch)
                 CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
 
-                transform.Rotate(Vector3.up * _rotationVelocity);
+                // Mouse X is completely ignored - no horizontal camera rotation
             }
         }
 
@@ -252,27 +257,46 @@ namespace StarterAssets
                 _speed = targetSpeed;
             }
 
-            Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
+            Vector3 inputDirection = Vector3.zero;
 
             if (_input.move != Vector2.zero)
             {
-                inputDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
+                // 90-DEGREE INCREMENTAL TURNS RELATIVE TO CAMERA
+                // W = forward, A = 90° left, S = 180° back, D = 90° right
 
-                // -------- FIX HOVERING BUG --------
-                // This forces the movement vector flat to the ground so the capsule doesn't slide into the sky
+                // Get camera's current Y rotation (where it's facing)
+                float cameraYRotation = _mainCamera.transform.eulerAngles.y;
+
+                // Calculate input angle relative to camera
+                float inputAngle = Mathf.Atan2(_input.move.x, _input.move.y) * Mathf.Rad2Deg;
+
+                // Snap to nearest 90-degree increment (0, 90, 180, 270)
+                float snappedAngle = Mathf.Round(inputAngle / 90f) * 90f;
+
+                // Add camera rotation to make it relative
+                float targetAngle = cameraYRotation + snappedAngle;
+
+                Quaternion targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
+
+                // SMOOTH rotation to the snapped angle
+                // Change this 8f number to adjust smoothness:
+                // 5f = slower, more visible turning
+                // 12f = faster, snappier turning
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
+
+                // Movement follows body direction
+                inputDirection = transform.forward;
                 inputDirection.y = 0f;
 
-                // -------- VISUAL TWIST FIX --------
+                // Bear model faces forward in local space
                 if (BearModel != null)
                 {
-                    Vector3 localLookDir = new Vector3(_input.move.x, 0.0f, _input.move.y);
-                    Quaternion targetRot = Quaternion.LookRotation(localLookDir);
-                    BearModel.transform.localRotation = Quaternion.Slerp(BearModel.transform.localRotation, targetRot, Time.deltaTime * RotationSpeed * 3f);
+                    BearModel.transform.localRotation = Quaternion.identity;
                 }
             }
             else if (BearModel != null)
             {
-                BearModel.transform.localRotation = Quaternion.Slerp(BearModel.transform.localRotation, Quaternion.identity, Time.deltaTime * RotationSpeed * 3f);
+                BearModel.transform.localRotation = Quaternion.identity;
             }
 
             _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
@@ -297,24 +321,29 @@ namespace StarterAssets
                     StartCoroutine(StunCoroutine());
                 }
 
-                // FIX 1: STRONGER GROUND FORCE - Changed from -2f to -8f
+                // STRONGER GROUND FORCE - Changed from -2f to -8f
                 // This PUSHES the bear into the ground instead of gently tapping him
                 if (_verticalVelocity < 0.0f)
                 {
                     _verticalVelocity = -8f;
                 }
 
-                // FIX 2: INSTANT JUMP - Removed the _jumpTimeoutDelta check
-                // Now you can jump IMMEDIATELY when grounded, no waiting!
+                // INSTANT JUMP - Removed the _jumpTimeoutDelta check
+                // Now he can jump IMMEDIATELY when grounded
                 if (_input.jump && _canMove)
                 {
-                    // FIX 3: ANIMATION FIRES INSTANTLY - Trigger happens BEFORE velocity change
+                    // ANIMATION FIRES INSTANTLY - Trigger happens BEFORE velocity change
                     if (_animator != null)
                     {
                         _animator.SetTrigger("NormalJump");
                     }
 
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+
+                    // FORCE UNGROUNDED - This stops the "float before jump" bug
+                    // We FORCE the bear to NOT be grounded immediately so the jump starts NOW
+                    Grounded = false;
+
                     _jumpTimeoutDelta = JumpTimeout; // Reset timeout AFTER jump
                 }
 
@@ -347,7 +376,7 @@ namespace StarterAssets
             }
         }
 
-        // -------- RESTORED CLAMPANGLE FUNCTION --------
+        // -------- CLAMPANGLE FUNCTION --------
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
         {
             if (lfAngle < -360f) lfAngle += 360f;
