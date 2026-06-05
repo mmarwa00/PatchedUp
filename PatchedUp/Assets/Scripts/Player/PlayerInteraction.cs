@@ -2,16 +2,21 @@ using UnityEngine;
 using StarterAssets;
 
 public class PlayerInteraction : MonoBehaviour {
+    
+    
     [SerializeField] private float interactionDistance = 3.0f;
     [SerializeField] private Transform handPosition;
 
     private Camera _mainCamera;
     private StarterAssetsInputs _input;
+    private PlayerInventory _inventory;
+    private int currentEquippedIndex = 0;
     private IPickable _carriedItem;
 
     private void Start() {
         _mainCamera = Camera.main;
         _input = GetComponent<StarterAssetsInputs>();
+        _inventory = GetComponent<PlayerInventory>();   
     }
 
     private void Update() {
@@ -25,6 +30,12 @@ public class PlayerInteraction : MonoBehaviour {
 
             Ray ray = _mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
             if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance)) {
+
+                AbilityItem abilityItem = hit.collider.GetComponent<AbilityItem>();
+                if (abilityItem != null) {
+                    PickupToInventory(abilityItem);
+                    return;
+                }
 
                 IPickable pickable = hit.collider.GetComponent<IPickable>();
                 if (pickable != null) {
@@ -40,13 +51,29 @@ public class PlayerInteraction : MonoBehaviour {
             }
         }
 
-        
         if (_carriedItem != null) {
             Transform itemTransform = (_carriedItem as MonoBehaviour).transform;
             itemTransform.position = handPosition.position;
             itemTransform.rotation = handPosition.rotation;
         }
     }
+
+    private void PickupToInventory(AbilityItem item) {
+
+        item.OnPickup();
+
+        item.transform.SetParent(handPosition);
+        item.transform.localPosition = Vector3.zero;
+        item.transform.localRotation = Quaternion.identity;
+
+        _inventory.AddItem(item);
+
+        if (_inventory.ItemsInBag.Count == 1) { 
+            currentEquippedIndex = 0;
+            item.gameObject.SetActive(true);
+        }
+    }
+
 
     private void Pickup(IPickable item, GameObject obj) {
         _carriedItem = item;

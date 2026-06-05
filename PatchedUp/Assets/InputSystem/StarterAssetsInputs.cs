@@ -16,6 +16,13 @@ namespace StarterAssets
         public bool crouch;
         public bool interact;
 
+        [Header("Ability Inputs")]
+        public bool useAbility;
+        public bool switchAbility;
+
+        [Header("Inevntory")]
+        public bool openInventory;
+
         [Header("Movement Settings")]
 		public bool analogMovement;
 
@@ -24,7 +31,7 @@ namespace StarterAssets
 		public bool cursorInputForLook = true;
 
 #if ENABLE_INPUT_SYSTEM
-		public void OnMove(InputValue value)
+        public void OnMove(InputValue value)
 		{
 			MoveInput(value.Get<Vector2>());
 		}
@@ -52,6 +59,21 @@ namespace StarterAssets
         }
         public void OnInteract(InputValue value) {
             interact = value.isPressed;
+        }
+
+		public void OnUseAbility(InputValue value) {
+			useAbility = value.isPressed;
+        }
+
+		public void OnSwitchAbility(InputValue value) {
+            switchAbility = value.isPressed;
+
+        }
+
+		public void OnOpenInventory(InputValue value) {
+			openInventory = value.isPressed;
+
+            Debug.Log($"[INPUT DETECTED] Tab gedrückt! Status ist: {openInventory}");
         }
 
 #endif

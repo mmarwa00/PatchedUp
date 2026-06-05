@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using StarterAssets;
 
 public class CaptureSystem : MonoBehaviour
@@ -10,52 +11,72 @@ public class CaptureSystem : MonoBehaviour
     private bool _alreadyCaught = false;
 
     [SerializeField] private Transform respawnPoint;
+    [SerializeField] private float caughtScreenDuration = 3.5f;
 
     private void Start()
     {
         _controller = GetComponent<FirstPersonController>();
         _characterController = GetComponent<CharacterController>();
         _animator = GetComponentInChildren<Animator>();
+
     }
 
-    public void OnCaught()
-    {
+    public void OnCaught() {
         if (_alreadyCaught) return;
         _alreadyCaught = true;
-        _catchCount++;
 
-        if (_catchCount == 1)
-        {
-            Debug.Log("Erwischt! Gliedmaßenverlust — langsamer.");
-            _controller.MoveSpeedValue *= 0.5f;
-            _controller.SprintSpeedValue *= 0.5f;
-            Respawn();
-            _alreadyCaught = false;
-        }
-        else if (_catchCount >= 2)
-        {
-            Debug.Log("Game Over!");
-
-           
-            if (_animator != null)
-            {
-                _animator.SetTrigger("Die");
-            }
-            // Disable movement so the player can't walk away while dead
-            _characterController.enabled = false;
-
-            // Your scene management line can un-comment here when you create the scene:
-            // UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver");
+        GameManager gm = App.Instance.GetManager<GameManager>();
+        if (gm != null) {
+            gm.PlayerCaught(this);
         }
     }
 
-    private void Respawn()
-    {
-        _characterController.enabled = false;
+    public void ApplySpeedPenalty(float factor) {
+        if (_controller != null) {
+            _controller.MoveSpeedValue *= factor;
+            _controller.SprintSpeedValue *= factor;
+        }
+    }
+
+    public void StartRespawnSequence() {
+        StartCoroutine(ShowCaughtScreenAndRespawn());
+    }
+
+    public void FreezePlayer() {
+        if (_animator != null) _animator.SetTrigger("Die");
+        if (_characterController != null) _characterController.enabled = false;
+        if (_controller != null) _controller.enabled = false;
+    }
+
+    private IEnumerator ShowCaughtScreenAndRespawn() {
+        UIManager ui = App.Instance.GetManager<UIManager>();
+        if (ui != null) ui.ShowCaughtScreen(true);
+
+        if (_controller != null) _controller.enabled = false;
+
+        yield return new WaitForSeconds(caughtScreenDuration);
+
+        if (_characterController != null) _characterController.enabled = false;
         transform.position = respawnPoint.position;
         transform.rotation = respawnPoint.rotation;
-        _characterController.enabled = true;
+        if (_characterController != null) _characterController.enabled = true;
 
-        Debug.Log("Respawned!");
+        if (ui != null) ui.ShowCaughtScreen(false);
+        if (_controller != null) _controller.enabled = true;
+
+        _alreadyCaught = false;
+    }
+    public void RestartGameButton() {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(
+            UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
+        );
+    }
+
+    public void QuitGameButton() {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
     }
 }

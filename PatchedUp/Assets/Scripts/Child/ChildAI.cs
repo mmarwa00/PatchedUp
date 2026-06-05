@@ -3,100 +3,139 @@ using UnityEngine.AI;
 
 public class ChildAI : MonoBehaviour {
 
-    [Header("Patrol")]
-    [SerializeField] private float walkRange = 5f;
-    private float _stuckTimer = 0f;
+    [Header("Patrol Settings")]
+    [SerializeField] private float baseWalkRange = 6f;
+    [SerializeField] private float openAreaWalkRange = 18f;
+    [SerializeField] private float patrolSpeed = 2.0f;
+    [SerializeField] private float chaseSpeed = 4.8f;
+    [SerializeField] private float searchWaitTime = 2.5f;
 
     private Vector3 _destPoint;
     private bool _walkPointSet;
-    [Header("Sichtkegel")]
-    [SerializeField] private float sightRange = 8f;
+    private float _stuckTimer = 0f;
+    private float _waitTimer = 0f;
+    private bool _isSearchingAtPoint = false;
+
+    [Header("Sichtkegel (Visual Detection)")]
+    [SerializeField] private float sightRange = 10f;
     [SerializeField] private float sightAngle = 90f;
     [SerializeField] private LayerMask obstacleLayers;
-    [SerializeField] private LayerMask playerLayer;
 
     [Header("Capture")]
-    [SerializeField] private float captureDistance = 6.0f;
+    [SerializeField] private float captureDistance = 2.0f;
 
     private NavMeshAgent _agent;
     private GameObject _player;
     private CaptureSystem _captureSystem;
+    private Animator animator;
     private bool _playerDetected = false;
+
     private void Start() {
         _agent = GetComponent<NavMeshAgent>();
         _player = GameObject.FindGameObjectWithTag("Player");
-        _captureSystem = _player.GetComponent<CaptureSystem>();
+        if (_player != null) {
+            _captureSystem = _player.GetComponent<CaptureSystem>();
+        }
+        animator = GetComponentInChildren<Animator>();
     }
 
     private void Update() {
         _playerDetected = CanSeePlayer();
 
         if (_playerDetected) {
+            _isSearchingAtPoint = false;
             Chase();
-            //TryCapture();
+            TryCapture();
         }
         else {
             Patrol();
         }
 
+        if (animator != null && _agent != null) {
+            bool IsWalking = _agent.velocity.magnitude > 0.1f;
+            animator.SetBool("IsWalking", IsWalking);
+        }
     }
 
     private bool CanSeePlayer() {
+        if (_player == null) return false;
+
         Vector3 dirToPlayer = _player.transform.position - transform.position;
         float distance = dirToPlayer.magnitude;
 
-        // Zu weit weg?
         if (distance > sightRange) return false;
 
-        // Außerhalb des Kegels?
         float angle = Vector3.Angle(transform.forward, dirToPlayer);
         if (angle > sightAngle / 2f) return false;
 
-        // Wand dazwischen?
-        if (Physics.Raycast(transform.position, dirToPlayer.normalized,
-            distance, obstacleLayers)) return false;
+        Vector3 rayStart = transform.position + Vector3.up * 1f;
+        if (Physics.Raycast(rayStart, dirToPlayer.normalized, distance, obstacleLayers)) {
+            return false;
+        }
 
         return true;
     }
 
     private void Chase() {
+        _agent.speed = chaseSpeed;
         _agent.SetDestination(_player.transform.position);
     }
 
-    /*private void TryCapture() {
+    private void TryCapture() {
+        if (_captureSystem == null) return;
+
         float dist = Vector3.Distance(transform.position, _player.transform.position);
         if (dist <= captureDistance) {
             _captureSystem.OnCaught();
         }
-    }*/
+    }
 
     private void OnTriggerEnter(Collider other) {
-        if (other.CompareTag("Player")) {
+        if (other.CompareTag("Player") && _captureSystem != null) {
             _captureSystem.OnCaught();
         }
     }
 
     private void Patrol() {
+        _agent.speed = patrolSpeed;
+
+        // Wenn wir gerade am Punkt stehen und uns "umschauen"
+        if (_isSearchingAtPoint) {
+            _waitTimer += Time.deltaTime;
+
+            //Das Kind rotiert beim Warten langsam hin und her
+            transform.Rotate(0, Mathf.Sin(Time.time * 3f) * 0.5f, 0);
+
+            if (_waitTimer >= searchWaitTime) {
+                _isSearchingAtPoint = false;
+                _walkPointSet = false;
+            }
+            return;
+        }
+
         if (!_walkPointSet) SearchForDest();
 
         if (_walkPointSet) {
             _agent.SetDestination(_destPoint);
             _stuckTimer += Time.deltaTime;
 
-
-            if (_agent.pathStatus == NavMeshPathStatus.PathInvalid ||
-                _agent.pathStatus == NavMeshPathStatus.PathPartial ||
-                _stuckTimer > 3f ||
-                Vector3.Distance(transform.position, _destPoint) < 1f) {
-                _walkPointSet = false;
+            if (Vector3.Distance(transform.position, _destPoint) < 1.5f || _stuckTimer > 4f) {
+                _isSearchingAtPoint = true;
+                _waitTimer = 0f;
                 _stuckTimer = 0f;
             }
         }
     }
 
     private void SearchForDest() {
-        float randomZ = Random.Range(-walkRange, walkRange);
-        float randomX = Random.Range(-walkRange, walkRange);
+        float currentRange = baseWalkRange;
+
+        if (!Physics.Raycast(transform.position, transform.forward, 8f, obstacleLayers)) {
+            currentRange = openAreaWalkRange; 
+        }
+
+        float randomZ = Random.Range(-currentRange, currentRange);
+        float randomX = Random.Range(-currentRange, currentRange);
 
         Vector3 candidate = new Vector3(
             transform.position.x + randomX,
@@ -104,7 +143,7 @@ public class ChildAI : MonoBehaviour {
             transform.position.z + randomZ
         );
 
-        if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 2.0f, NavMesh.AllAreas)) {
+        if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 4.0f, NavMesh.AllAreas)) {
             _destPoint = hit.position;
             _walkPointSet = true;
             _stuckTimer = 0f;
@@ -118,7 +157,8 @@ public class ChildAI : MonoBehaviour {
         Vector3 leftBound = Quaternion.Euler(0, -sightAngle / 2f, 0) * transform.forward;
         Vector3 rightBound = Quaternion.Euler(0, sightAngle / 2f, 0) * transform.forward;
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, leftBound * sightRange);
-        Gizmos.DrawRay(transform.position, rightBound * sightRange);
+        Vector3 rayStart = transform.position + Vector3.up * 1f;
+        Gizmos.DrawRay(rayStart, leftBound * sightRange);
+        Gizmos.DrawRay(rayStart, rightBound * sightRange);
     }
 }
