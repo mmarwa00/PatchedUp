@@ -3,7 +3,12 @@ guid: 2e62dac4a55edb34bb84548317524665
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Light iron
+    second: {fileID: 2100000, guid: 38e29599578daa5439fb42a708a40b42, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
