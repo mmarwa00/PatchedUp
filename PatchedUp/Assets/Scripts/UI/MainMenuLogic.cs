@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 public class MainMenuLogic : MonoBehaviour {
@@ -8,12 +9,15 @@ public class MainMenuLogic : MonoBehaviour {
     private GameObject loading;
 
     [SerializeField] private Button continueButton;
+    [SerializeField] private AudioMixerGroup audioMixerGroup;
 
     public AudioSource buttonSound;
 
 
 
     void Start() {
+        buttonSound.outputAudioMixerGroup = audioMixerGroup;
+        
         mainMenu = GameObject.Find("MainMenuCanvas");
         optionsMenu = GameObject.Find("OptionsCanvas");
         extrasMenu = GameObject.Find("ExtrasCanvas");
