@@ -144,6 +144,8 @@ namespace StarterAssets
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
             _targetHeight = StandHeight;
+
+            Debug.Log("[FPC] Start complete. Controller: " + _controller + " | Input: " + _input + " | Camera: " + _mainCamera + " | Animator: " + _animator);
         }
 
         public float MoveSpeedValue
