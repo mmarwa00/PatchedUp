@@ -14,6 +14,7 @@ public class TowerController : MonoBehaviour
     private void Start()
     {
         totalTowerSize = utensilOrder.Length;
+        utensilInputOrder = new int[totalTowerSize];
     }
 
     private void OnEnable()
@@ -30,13 +31,15 @@ public class TowerController : MonoBehaviour
     {
         if (isSnapped)
         {
+            if (currentTowerSize >= totalTowerSize) return;
             utensilInputOrder[currentTowerSize] = id;
             currentTowerSize++;
         }
         else
         {
-            utensilInputOrder[currentTowerSize] = -1;
+            if (currentTowerSize <= 0) return;
             currentTowerSize--;
+            utensilInputOrder[currentTowerSize] = -1;
         }
 
         CheckIfCorrect();
@@ -48,7 +51,7 @@ public class TowerController : MonoBehaviour
         
         bool isEqual =  utensilInputOrder.SequenceEqual(utensilOrder);
         
-        KitchenTowerEvents.OnTowerBuilt(isEqual,  towerId);
+        KitchenTowerEvents.OnTowerBuiltEvent(isEqual,  towerId);
         
     }
 }
