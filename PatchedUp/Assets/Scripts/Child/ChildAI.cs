@@ -4,10 +4,10 @@ using UnityEngine.AI;
 public class ChildAI : MonoBehaviour {
 
     [Header("Patrol Settings")]
-    [SerializeField] private float baseWalkRange = 6f;
-    [SerializeField] private float openAreaWalkRange = 18f;
-    [SerializeField] private float patrolSpeed = 2.0f;
-    [SerializeField] private float chaseSpeed = 4.8f;
+    [SerializeField] private float baseWalkRange = 1.5f;
+    [SerializeField] private float openAreaWalkRange = 4.0f;
+    [SerializeField] private float patrolSpeed = 1.0f;
+    [SerializeField] private float chaseSpeed = 1.8f;
     [SerializeField] private float searchWaitTime = 2.5f;
 
     private Vector3 _destPoint;
@@ -17,18 +17,21 @@ public class ChildAI : MonoBehaviour {
     private bool _isSearchingAtPoint = false;
 
     [Header("Sichtkegel (Visual Detection)")]
-    [SerializeField] private float sightRange = 10f;
+    [SerializeField] private float sightRange = 5.0f;
     [SerializeField] private float sightAngle = 90f;
     [SerializeField] private LayerMask obstacleLayers;
 
     [Header("Capture")]
-    [SerializeField] private float captureDistance = 2.0f;
-
+    [SerializeField] private float captureDistance = 0.3f;
     private NavMeshAgent _agent;
     private GameObject _player;
     private CaptureSystem _captureSystem;
     private Animator animator;
     private bool _playerDetected = false;
+
+    private void Awake() {
+        Debug.Log("Kind ist aufgewacht und lebt!");
+    }
 
     private void Start() {
         _agent = GetComponent<NavMeshAgent>();
@@ -37,9 +40,20 @@ public class ChildAI : MonoBehaviour {
             _captureSystem = _player.GetComponent<CaptureSystem>();
         }
         animator = GetComponentInChildren<Animator>();
+
+        // RETTUNG: Zwingt den Agenten beim Starten, sich fest auf das NavMesh zu saugen
+        if (_agent != null) {
+            if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2.0f, NavMesh.AllAreas)) {
+                _agent.Warp(hit.position);
+                Debug.Log("Kind wurde erfolgreich auf das NavMesh gewarpt!");
+            }
+        }
     }
 
     private void Update() {
+        // SICHERHEITS-CHECK: Wenn der Agent nicht sauber auf dem Netz steht, abbrechen statt abstürzen!
+        if (_agent == null || !_agent.isOnNavMesh) return;
+
         _playerDetected = CanSeePlayer();
 
         if (_playerDetected) {
@@ -51,14 +65,14 @@ public class ChildAI : MonoBehaviour {
             Patrol();
         }
 
-        if (animator != null && _agent != null) {
+        if (animator != null) {
             bool IsWalking = _agent.velocity.magnitude > 0.1f;
             animator.SetBool("IsWalking", IsWalking);
         }
     }
 
     private bool CanSeePlayer() {
-        if (_player == null) return false;
+        if (_player == null || !_agent.isOnNavMesh) return false;
 
         Vector3 dirToPlayer = _player.transform.position - transform.position;
         float distance = dirToPlayer.magnitude;
@@ -77,6 +91,7 @@ public class ChildAI : MonoBehaviour {
     }
 
     private void Chase() {
+        if (!_agent.isOnNavMesh) return;
         _agent.speed = chaseSpeed;
         _agent.SetDestination(_player.transform.position);
     }
@@ -131,7 +146,7 @@ public class ChildAI : MonoBehaviour {
         float currentRange = baseWalkRange;
 
         if (!Physics.Raycast(transform.position, transform.forward, 8f, obstacleLayers)) {
-            currentRange = openAreaWalkRange; 
+            currentRange = openAreaWalkRange;
         }
 
         float randomZ = Random.Range(-currentRange, currentRange);

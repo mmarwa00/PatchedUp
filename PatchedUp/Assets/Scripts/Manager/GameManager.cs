@@ -10,6 +10,8 @@ public class GameManager : ManagerBase
     private int _catchCount = 0;
     private bool _isPaused = false;
 
+    public bool IsPaused => _isPaused;
+
     public override IEnumerator Init() {
         Debug.Log("[GameManager] Erfolgreich im App-System initialisiert!");
         yield break;
@@ -60,9 +62,13 @@ public class GameManager : ManagerBase
 
     private void Update() {
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) {
-            if (_isPaused) ResumeGame();
-            else PauseGame();
+            TogglePause();
         }
+    }
+
+    public void TogglePause() {
+        if (_isPaused) ResumeGame();
+        else PauseGame();
     }
 
     public void PauseGame() {
