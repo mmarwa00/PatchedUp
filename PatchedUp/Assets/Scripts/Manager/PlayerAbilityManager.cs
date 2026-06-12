@@ -4,34 +4,45 @@ using UnityEngine;
 using StarterAssets;
 
 public class PlayerAbilityManager : ManagerBase {
-    [Header("References")]
-    [SerializeField] private PlayerInventory playerInventory;
-    [SerializeField] private InventoryMenuUI inventoryMenuUI;
+
+    private PlayerInventory playerInventory;
+    private InventoryMenuUI inventoryMenuUI;
+
+    private GameObject bodyNormal;
+    private GameObject bodyHook;
+    private GameObject bodyPin;
 
     [Header("Prefabs Database")]
     [SerializeField] private List<AbilityItem> allAvailableAbilityPrefabs;
 
     private StarterAssetsInputs _input;
     private Camera _mainCamera;
-    private int _currentSelectedSlot = 0;
+    private int _currentSelectedSlot = -1;
+
+    public void SetupBearBodies(GameObject normal, GameObject hook, GameObject pin) {
+        bodyNormal = normal;
+        bodyHook = hook;
+        bodyPin = pin;
+
+        if (_currentSelectedSlot != -1 && playerInventory.ItemsInBag.Count > _currentSelectedSlot) {
+            UpdatePhysicalBearVisuals(playerInventory.ItemsInBag[_currentSelectedSlot].AbilityName);
+        }
+        else {
+            UpdatePhysicalBearVisuals("Normal");
+        }
+        Debug.Log("[PlayerAbilityManager] Bären-Körper erfolgreich aus der Spielszene gekoppelt!");
+    }
 
     public override IEnumerator Init() {
         _input = GetComponent<StarterAssetsInputs>();
         _mainCamera = Camera.main;
         if (playerInventory == null) playerInventory = GetComponent<PlayerInventory>();
-
-        Debug.Log("[PlayerAbilityManager] Initialisiert!");
         yield break;
     }
 
     public override IEnumerator Load() {
-        // 1. Daten vom SaveSystem holen
         SaveData currentSave = SaveSystem.Load();
-
         if (currentSave != null && currentSave.collectedAbilityNames.Count > 0) {
-            Debug.Log("[PlayerAbilityManager] Lade gespeicherte Fähigkeiten...");
-
-            // Gespeicherte Fähigkeiten wieder ins Inventar spawnen
             foreach (string abilityName in currentSave.collectedAbilityNames) {
                 AbilityItem matchingPrefab = allAvailableAbilityPrefabs.Find(p => p.AbilityName == abilityName);
                 if (matchingPrefab != null) {
@@ -39,41 +50,30 @@ public class PlayerAbilityManager : ManagerBase {
                     playerInventory.AddItem(spawnedItem);
                 }
             }
+            if (playerInventory.ItemsInBag.Count > 0) {
+                _currentSelectedSlot = 0;
+            }
         }
         yield break;
+    }
+
+    private void Awake() {
+        _input = GetComponent<StarterAssetsInputs>();
+        if (playerInventory == null) playerInventory = GetComponent<PlayerInventory>();
     }
 
     private void Update() {
         HandleAbilityCycling();
         HandleAbilityUsage();
-
-
         if (inventoryMenuUI != null && inventoryMenuUI.IsMenuOpen) return;
     }
-    private void Awake() {
-        // Wir holen uns die Tasten direkt vom selben Objekt
-        _input = GetComponent<StarterAssetsInputs>();
 
-        if (playerInventory == null) {
-            playerInventory = GetComponent<PlayerInventory>();
-        }
+    public void SetupInventoryReferences(PlayerInventory inventory, InventoryMenuUI menuUI) {
+        this.playerInventory = inventory;
+        this.inventoryMenuUI = menuUI;
 
-        Debug.Log($"[PlayerAbilityManager] Physischer Awake-Kanal geöffnet! Hat Input gefunden: {_input != null}");
+        Debug.Log("[PlayerAbilityManager] Inventar und Menü-UI erfolgreich aus der Spielszene gekoppelt!");
     }
-    public void TriggerSaveGame() {
-        // Aktuellen Zustand laden oder neuen erstellen
-        SaveData dataToSave = SaveSystem.Load() ?? new SaveData();
-
-        dataToSave.collectedAbilityNames.Clear();
-        foreach (var item in playerInventory.ItemsInBag) {
-            dataToSave.collectedAbilityNames.Add(item.AbilityName);
-        }
-
-        dataToSave.lastPlayedUtcTicks = System.DateTime.UtcNow.Ticks;
-
-        SaveSystem.Save(dataToSave);
-    }
-
     private void HandleAbilityCycling() {
         if (_input == null) return;
 
@@ -87,7 +87,10 @@ public class PlayerAbilityManager : ManagerBase {
             }
 
             _currentSelectedSlot = (_currentSelectedSlot + 1) % items.Count;
-            Debug.Log($"[C] Fähigkeit gewechselt auf: {items[_currentSelectedSlot].AbilityName}");
+            string activeAbility = items[_currentSelectedSlot].AbilityName;
+
+            Debug.Log($"[C] Wechsel zu Bär mit: {activeAbility}");
+            UpdatePhysicalBearVisuals(activeAbility);
         }
     }
 
@@ -98,14 +101,38 @@ public class PlayerAbilityManager : ManagerBase {
             _input.useAbility = false;
 
             var items = playerInventory.ItemsInBag;
-            if (items.Count == 0) {
-                Debug.Log("Du hast keine Fähigkeit zum Einsetzen!");
+            if (items.Count == 0 || _currentSelectedSlot == -1) {
+                Debug.Log("Du hast keine Fähigkeit aktiv!");
                 return;
             }
 
-            if (items.Count > _currentSelectedSlot) {
-                Debug.Log($"[F] Benutze Fähigkeit: {items[_currentSelectedSlot].AbilityName}");
+            if (items.Count > _currentSelectedSlot && items[_currentSelectedSlot] != null) {
                 items[_currentSelectedSlot].UseAbility(_mainCamera);
+            }
+        }
+    }
+
+    private void UpdatePhysicalBearVisuals(string abilityName) {
+        if (bodyNormal != null) bodyNormal.SetActive(false);
+        if (bodyHook != null) bodyHook.SetActive(false);
+        if (bodyPin != null) bodyPin.SetActive(false);
+
+        if (abilityName == "Hook") {
+            if (bodyHook != null) bodyHook.SetActive(true);
+        }
+        else if (abilityName == "Pin") {
+            if (bodyPin != null) bodyPin.SetActive(true);
+        }
+        else {
+            if (bodyNormal != null) bodyNormal.SetActive(true);
+        }
+    }
+
+    public void OnItemPickedUp() {
+        if (_currentSelectedSlot == -1 && playerInventory.ItemsInBag.Count > 0) {
+            _currentSelectedSlot = 0;
+            if (bodyNormal != null) { // Falls Körper schon registriert sind, direkt updaten
+                UpdatePhysicalBearVisuals(playerInventory.ItemsInBag[_currentSelectedSlot].AbilityName);
             }
         }
     }

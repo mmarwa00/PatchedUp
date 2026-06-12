@@ -3,11 +3,11 @@ using System.Collections;
 
 public class UIManager : ManagerBase
 {
-    [Header("Canvases / Panels")]
-    [SerializeField] private GameObject caughtCanvas;
-    [SerializeField] private GameObject gameOverCanvas;
-    [SerializeField] private GameObject youWonCanvas;
-    [SerializeField] private GameObject pauseCanvas;
+
+    private GameObject caughtCanvas;
+    private GameObject gameOverCanvas;
+    private GameObject youWonCanvas;
+    private GameObject pauseCanvas;
     public override IEnumerator Init() {
         Debug.Log("[UIManager] UI-Leitungen erfolgreich verlegt!");
         yield break;
@@ -15,6 +15,21 @@ public class UIManager : ManagerBase
 
     public override IEnumerator Load() {
         yield break;
+    }
+
+    public void SetupGameCanvases(GameObject caught, GameObject gameOver, GameObject youWon, GameObject pause) {
+        this.caughtCanvas = caught;
+        this.gameOverCanvas = gameOver;
+        this.youWonCanvas = youWon;
+        this.pauseCanvas = pause;
+
+        // Szenenstart erst mal alle canvas unsichtbar machen
+        if (this.caughtCanvas != null) this.caughtCanvas.SetActive(false);
+        if (this.gameOverCanvas != null) this.gameOverCanvas.SetActive(false);
+        if (this.youWonCanvas != null) this.youWonCanvas.SetActive(false);
+        if (this.pauseCanvas != null) this.pauseCanvas.SetActive(false);
+
+        Debug.Log("[UIManager] Sämtliche Spiel-Canvases wurden erfolgreich mit der App gekoppelt!");
     }
 
     public void ShowCaughtScreen(bool state) {
