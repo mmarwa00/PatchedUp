@@ -7,6 +7,7 @@ TagManager:
   - Ground
   - CinemachineTarget
   - TeaCup
+  - climbable
   layers:
   - Default
   - TransparentFX
