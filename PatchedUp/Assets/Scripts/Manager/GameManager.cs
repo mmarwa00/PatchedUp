@@ -1,7 +1,9 @@
-using UnityEngine;
+using System;
 using System.Collections;
-using UnityEngine.SceneManagement;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameManager : ManagerBase
 {
@@ -14,6 +16,45 @@ public class GameManager : ManagerBase
     }
 
     public override IEnumerator Load() {
+        Debug.Log("[GameManager] Startet automatischen Ladevorgang aus der save.json...");
+
+        SaveData loadedData = SaveSystem.Load();
+
+        // Wenn keine Datei existiert
+        if (loadedData == null) {
+            Debug.Log("[GameManager] Keine save.json gefunden oder Neues Spiel gestartet. Nutze Standard-Startwerte.");
+            yield break;
+        }
+
+        this._catchCount = loadedData.catchCount;
+        Debug.Log($"[GameManager] Geladener Catch-Count: {this._catchCount}");
+
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null) {
+
+            // Controller kurz ausschalten, ihn teleportieren, und wieder einschalten!
+            CharacterController controller = player.GetComponent<CharacterController>();
+            if (controller != null) controller.enabled = false;
+
+            player.transform.position = new Vector3(loadedData.posX, loadedData.posY, loadedData.posZ);
+            Debug.Log($"[GameManager] Spieler erfolgreich teleportiert nach X: {loadedData.posX}, Y: {loadedData.posY}");
+
+            if (controller != null) controller.enabled = true;
+        }
+
+        PlayerAbilityManager abilityManager = App.Instance.GetManager<PlayerAbilityManager>();
+        if (abilityManager != null) {
+            PlayerInventory inventory = abilityManager.GetComponent<PlayerInventory>();
+            if (inventory != null && inventory.ItemsInBag != null) {
+                inventory.ItemsInBag.Clear();
+
+
+                foreach (string abilityName in loadedData.collectedAbilityNames) {
+                    // Beispiel: inventory.AddLoadedItemByName(abilityName);
+                }
+            }
+        }
+
         yield break;
     }
 
@@ -97,10 +138,50 @@ public class GameManager : ManagerBase
             }
         }
 
-        //  physische Save-File auf der Festplatte gelöscht wird:
-        // SaveSystem.DeleteSave(); 
+        SaveSystem.DeleteSave(); 
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void SaveGame() {
+        Debug.Log("[GameManager] Starte Speichervorgang...");
+
+        SaveData dataToSave = new SaveData();
+        dataToSave.lastPlayedUtcTicks = DateTime.UtcNow.Ticks;
+
+        dataToSave.catchCount = this._catchCount;
+
+        // Wie viele Puzzles gelöst wurden (falls du eine Variable dafür hast)
+        // dataToSave.solvedPuzzlesCount = this._solvedPuzzlesCount;
+
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null) {
+            Vector3 currentPos = player.transform.position;
+            dataToSave.posX = currentPos.x;
+            dataToSave.posY = currentPos.y;
+            dataToSave.posZ = currentPos.z;
+            Debug.Log($"[GameManager] Speicher Position: X:{dataToSave.posX}, Y:{dataToSave.posY}");
+        }
+
+        PlayerAbilityManager abilityManager = App.Instance.GetManager<PlayerAbilityManager>();
+        if (abilityManager != null) {
+            PlayerInventory inventory = abilityManager.GetComponent<PlayerInventory>();
+            if (inventory != null && inventory.ItemsInBag != null) {
+
+                dataToSave.collectedAbilityNames.Clear();
+
+                foreach (AbilityItem item in inventory.ItemsInBag) {
+                    if (item != null) {
+                        dataToSave.collectedAbilityNames.Add(item.AbilityName);
+                    }
+                }
+            }
+        }
+
+        SaveSystem.Save(dataToSave);
+        // Druckt den exakten Pfad als anklickbaren Link in die Unity-Console!
+        Debug.Log("[GameManager] Die Datei liegt HIER: " + Application.persistentDataPath);
+
     }
 
     public void QuitGame() {
