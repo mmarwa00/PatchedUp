@@ -1,24 +1,45 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class lightFlicker : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    private Light horrorLight;
+    private Light _light;
 
-    // Wie schnell das Licht flackert
-    public float speed = 0.1f;
+    [Header("Helligkeit")]
+    [Tooltip("Minimale Helligkeit beim Flackern")]
+    [SerializeField] private float minIntensity = 0.2f;
+    [Tooltip("Maximale Helligkeit beim Flackern")]
+    [SerializeField] private float maxIntensity = 1.5f;
 
-    void Start()
+    [Header("Geschwindigkeit (Die Bremse)")]
+    [Tooltip("Kürzeste Pause zwischen zwei Flacker-Momenten (in Sekunden)")]
+    [SerializeField] private float minDelay = 0.05f;
+    [Tooltip("Längste Pause zwischen zwei Flacker-Momenten (in Sekunden)")]
+    [SerializeField] private float maxDelay = 0.4f;
+
+    private void Awake()
     {
-        horrorLight = GetComponent<Light>();
+        _light = GetComponent<Light>();
     }
 
-    void Update()
+    private void OnEnable()
     {
-        // Ändert die Intensität zufällig in einem kleinen Bereich
-        if (Random.value > 0.8f)
+        // Startet die Flacker-Schleife
+        StartCoroutine(FlickerRoutine());
+    }
+
+    private System.Collections.IEnumerator FlickerRoutine()
+    {
+        while (true)
         {
-            horrorLight.intensity = Random.Range(0.1f, 0.5f);
+            // 1. Würfle eine zufällige Helligkeit aus
+            _light.intensity = Random.Range(minIntensity, maxIntensity);
+
+            // 2. Würfle aus, wie lange diese Helligkeit halten soll
+            float randomDelay = Random.Range(minDelay, maxDelay);
+
+            // 3. Warte exakt diese Zeit ab, bevor die Schleife von vorne beginnt
+            yield return new WaitForSeconds(randomDelay);
         }
     }
 }
