@@ -19,11 +19,19 @@ public class IntroController : MonoBehaviour
     public float fadeInDuration = 1.5f;
     public float distanceToStartFade = 1.5f;
 
-    [Header("Lighting")]
+    [Header("Lighting Controls")]
     public Light directionalLight;
-    public Color warmColor = new Color(1f, 0.95f, 0.8f);
-    public Color horrorColor = new Color(0.4f, 0.7f, 0.4f);
     public float lightTransitionDuration = 1.5f;
+
+    [Space(10)]
+    public Color warmColor = new Color(1f, 0.95f, 0.8f);
+    public float warmIntensity = 1f;
+    public Color warmAmbient = new Color(0.5f, 0.5f, 0.5f); // Normal room brightness
+
+    [Space(10)]
+    public Color horrorColor = new Color(0.2f, 0.3f, 0.4f); // A creepy cold color, NOT black
+    public float horrorIntensity = 0.3f; // Low intensity, but enough to cast shadows!
+    public Color horrorAmbient = new Color(0.01f, 0.01f, 0.01f); // Kills the hidden room light
 
     [Header("Scene")]
     public string nextSceneName = "GameScene";
@@ -34,16 +42,20 @@ public class IntroController : MonoBehaviour
     {
         _fadingOut = false;
 
-        // Turn brown bear ON, turn patched bear OFF
         teddyBrown.SetActive(true);
         teddyPatched.SetActive(false);
 
         blackPanel.alpha = 0f;
 
         if (directionalLight != null)
+        {
             directionalLight.color = warmColor;
+            directionalLight.intensity = warmIntensity;
+        }
 
-        // disable ChildAI and NavMeshAgent
+        // Set starting room brightness
+        RenderSettings.ambientLight = warmAmbient;
+
         var ai = child.GetComponent("ChildAI") as MonoBehaviour;
         if (ai != null) ai.enabled = false;
 
@@ -82,16 +94,12 @@ public class IntroController : MonoBehaviour
 
     private IEnumerator DoIntroSequence()
     {
-        // 1. Fade to black
         yield return StartCoroutine(Fade(0f, 1f, fadeOutDuration));
 
-        // 2. Hide Brown, Show Patched Born while it is pitch black
         teddyBrown.SetActive(false);
- 
         child.SetActive(false);
         teddyPatched.SetActive(true);
 
-        // 3. Freeze the animation instantly so he stays laying down in the dark
         Animator anim = teddyPatched.GetComponent<Animator>();
         if (anim != null)
         {
@@ -100,21 +108,16 @@ public class IntroController : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        // 4. Start changing the light color (don't wait for it to finish)
         if (directionalLight != null)
-            StartCoroutine(TransitionLight(warmColor, horrorColor));
+            StartCoroutine(TransitionLight());
 
-        // 5. Fade the screen back in so you see him laying there
         yield return StartCoroutine(Fade(1f, 0f, fadeInDuration));
 
-        // 6. NOW unfreeze the animation exactly when the light is fully back!
-       
         if (anim != null)
         {
             anim.speed = 1f;
         }
 
-        // Wait a few seconds for the getting-up animation to finish before loading next scene
         yield return new WaitForSeconds(5.5f);
 
         SceneManager.LoadScene(nextSceneName);
@@ -133,16 +136,23 @@ public class IntroController : MonoBehaviour
         blackPanel.alpha = to;
     }
 
-    private IEnumerator TransitionLight(Color from, Color to, float duration = -1f)
+    // Now transitions Color, Intensity, AND the hidden Ambient Light
+    private IEnumerator TransitionLight()
     {
-        if (duration < 0) duration = lightTransitionDuration;
         float elapsed = 0f;
-        while (elapsed < duration)
+        while (elapsed < lightTransitionDuration)
         {
             elapsed += Time.deltaTime;
-            directionalLight.color = Color.Lerp(from, to, elapsed / duration);
+            float t = elapsed / lightTransitionDuration;
+
+            directionalLight.color = Color.Lerp(warmColor, horrorColor, t);
+            directionalLight.intensity = Mathf.Lerp(warmIntensity, horrorIntensity, t);
+            RenderSettings.ambientLight = Color.Lerp(warmAmbient, horrorAmbient, t);
+
             yield return null;
         }
-        directionalLight.color = to;
+        directionalLight.color = horrorColor;
+        directionalLight.intensity = horrorIntensity;
+        RenderSettings.ambientLight = horrorAmbient;
     }
 }
