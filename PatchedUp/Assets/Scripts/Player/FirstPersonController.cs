@@ -59,7 +59,6 @@ namespace StarterAssets
         [SerializeField] private float CrouchCameraY = 1.8f;
         [SerializeField] private float StandCameraY = 4.0f;
 
-        // Stun System
         [Header("Stun Settings")]
         [SerializeField] private float StunFallSpeedThreshold = -12.0f;
         [SerializeField] private float StunDuration = 1.5f;
@@ -70,12 +69,12 @@ namespace StarterAssets
 
         private Animator _animator;
 
-        // Movement State
         public enum PlayerMovementState { Idle, Walking, Sprinting, Crouching, CrouchWalking }
         public PlayerMovementState CurrentMovementState { get; private set; }
 
         // cinemachine
         private float _cinemachineTargetPitch;
+        private float _cinemachineTargetYaw;
 
         // player
         private float _speed;
@@ -109,7 +108,7 @@ namespace StarterAssets
 #if ENABLE_INPUT_SYSTEM
                 return _playerInput.currentControlScheme == "KeyboardMouse";
 #else
-				return false;
+                return false;
 #endif
             }
         }
@@ -139,7 +138,7 @@ namespace StarterAssets
 #if ENABLE_INPUT_SYSTEM
             _playerInput = GetComponent<PlayerInput>();
 #else
-			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
+            Debug.LogError("Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
@@ -181,22 +180,22 @@ namespace StarterAssets
 
         private void CameraRotation()
         {
-            // HYBRID CONTROL:
-            // Mouse Y = tilt head UP/DOWN (to look at high obstacles)
-            // Mouse X = IGNORED (body rotation handled by WASD in Move())
-
+            // Mouse Y = tilt head UP/DOWN only
+            // Mouse X = rotates the whole player body (like Doc 2)
             if (_input.look.sqrMagnitude >= _threshold)
             {
                 float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
-                // ONLY process vertical look (Y axis)
                 _cinemachineTargetPitch += _input.look.y * RotationSpeed * deltaTimeMultiplier;
+                _cinemachineTargetYaw += _input.look.x * RotationSpeed * deltaTimeMultiplier;
+
                 _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
 
-                // Apply ONLY vertical rotation (pitch)
+                // Vertical look: camera target only
                 CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
 
-                // Mouse X is completely ignored - no horizontal camera rotation
+                // Horizontal look: rotate the whole player body
+                transform.rotation = Quaternion.Euler(0.0f, _cinemachineTargetYaw, 0.0f);
             }
         }
 
@@ -259,46 +258,19 @@ namespace StarterAssets
                 _speed = targetSpeed;
             }
 
-            Vector3 inputDirection = Vector3.zero;
+            // Doc 2 movement: camera-relative WASD, body faces where mouse points
+            Vector3 inputDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
 
-            if (_input.move != Vector2.zero)
+            // Bear mesh turns to face movement direction
+            if (_input.move != Vector2.zero && BearModel != null)
             {
-                // 90-DEGREE INCREMENTAL TURNS RELATIVE TO CAMERA
-                // W = forward, A = 90° left, S = 180° back, D = 90° right
-
-                // Get camera's current Y rotation (where it's facing)
-                float cameraYRotation = _mainCamera.transform.eulerAngles.y;
-
-                // Calculate input angle relative to camera
-                float inputAngle = Mathf.Atan2(_input.move.x, _input.move.y) * Mathf.Rad2Deg;
-
-                // Snap to nearest 90-degree increment (0, 90, 180, 270)
-                float snappedAngle = Mathf.Round(inputAngle / 90f) * 90f;
-
-                // Add camera rotation to make it relative
-                float targetAngle = cameraYRotation + snappedAngle;
-
-                Quaternion targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
-
-                // SMOOTH rotation to the snapped angle
-                // Change this 8f number to adjust smoothness:
-                // 5f = slower, more visible turning
-                // 12f = faster, snappier turning
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
-
-                // Movement follows body direction
-                inputDirection = transform.forward;
-                inputDirection.y = 0f;
-
-                // Bear model faces forward in local space
-                if (BearModel != null)
-                {
-                    BearModel.transform.localRotation = Quaternion.identity;
-                }
-            }
-            else if (BearModel != null)
-            {
-                BearModel.transform.localRotation = Quaternion.identity;
+                Vector3 localMeshDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
+                Quaternion targetMeshRotation = Quaternion.LookRotation(localMeshDirection);
+                BearModel.transform.localRotation = Quaternion.Slerp(
+                    BearModel.transform.localRotation,
+                    targetMeshRotation,
+                    Time.deltaTime * 15f
+                );
             }
 
             _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
@@ -323,30 +295,21 @@ namespace StarterAssets
                     StartCoroutine(StunCoroutine());
                 }
 
-                // STRONGER GROUND FORCE - Changed from -2f to -8f
-                // This PUSHES the bear into the ground instead of gently tapping him
                 if (_verticalVelocity < 0.0f)
                 {
                     _verticalVelocity = -8f;
                 }
 
-                // INSTANT JUMP - Removed the _jumpTimeoutDelta check
-                // Now he can jump IMMEDIATELY when grounded
                 if (_input.jump && _canMove)
                 {
-                    // ANIMATION FIRES INSTANTLY - Trigger happens BEFORE velocity change
                     if (_animator != null)
                     {
                         _animator.SetTrigger("NormalJump");
                     }
 
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
-
-                    // FORCE UNGROUNDED - This stops the "float before jump" bug
-                    // We FORCE the bear to NOT be grounded immediately so the jump starts NOW
                     Grounded = false;
-
-                    _jumpTimeoutDelta = JumpTimeout; // Reset timeout AFTER jump
+                    _jumpTimeoutDelta = JumpTimeout;
                 }
 
                 if (_jumpTimeoutDelta >= 0.0f)
@@ -365,7 +328,6 @@ namespace StarterAssets
 
                 _input.jump = false;
 
-                // -------- VARIABLE JUMP --------
                 if (_verticalVelocity > 0.0f && !isHoldingJump)
                 {
                     _verticalVelocity += Gravity * 2f * Time.deltaTime;
@@ -378,7 +340,6 @@ namespace StarterAssets
             }
         }
 
-        // -------- CLAMPANGLE FUNCTION --------
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
         {
             if (lfAngle < -360f) lfAngle += 360f;
