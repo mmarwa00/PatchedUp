@@ -59,6 +59,12 @@ namespace StarterAssets
         [SerializeField] private float CrouchCameraY = 1.8f;
         [SerializeField] private float StandCameraY = 4.0f;
 
+        [Header("Small Obstacles")]
+        [Tooltip("Assign your 'Toys' layer here")]
+        [SerializeField] private LayerMask ToyLayer;
+        [Tooltip("How close the bear gets before stopping")]
+        [SerializeField] private float BumperDistance = 0.4f;
+
         // Stun System
         [Header("Stun Settings")]
         [SerializeField] private float StunFallSpeedThreshold = -12.0f;
@@ -281,9 +287,6 @@ namespace StarterAssets
                 Quaternion targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
 
                 // SMOOTH rotation to the snapped angle
-                // Change this 8f number to adjust smoothness:
-                // 5f = slower, more visible turning
-                // 12f = faster, snappier turning
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
 
                 // Movement follows body direction
@@ -300,6 +303,24 @@ namespace StarterAssets
             {
                 BearModel.transform.localRotation = Quaternion.identity;
             }
+
+            // ==========================================
+            // THE INVISIBLE ANKLE BUMPER
+            // ==========================================
+            if (inputDirection != Vector3.zero)
+            {
+                // Create a starting point just slightly off the floor (ankle level)
+                Vector3 ankleHeight = transform.position + new Vector3(0, 0.1f, 0);
+
+                // Shoot a thick laser (SphereCast) forward. If it hits the ToyLayer, stop!
+                if (Physics.SphereCast(ankleHeight, 0.2f, inputDirection.normalized, out RaycastHit hit, BumperDistance, ToyLayer))
+                {
+                    // Erase the movement input so he dead-stops instead of stepping up
+                    inputDirection = Vector3.zero;
+                    _speed = 0f;
+                }
+            }
+            // ==========================================
 
             _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
         }
