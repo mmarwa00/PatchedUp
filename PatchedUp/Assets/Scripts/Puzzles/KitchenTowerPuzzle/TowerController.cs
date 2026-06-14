@@ -34,8 +34,6 @@ public class TowerController : MonoBehaviour, IPlaceable
         return TryGetWorldBounds(gameObject, out Bounds b) ? b.max.y : stackAnchor.position.y;
     }
 
-    // ---- IPlaceable ----
-
     public bool CanPlace(PickableItem item)
     {
         if (solved || stack.Count >= utensilOrder.Length) return false;
@@ -72,6 +70,9 @@ public class TowerController : MonoBehaviour, IPlaceable
             rb.useGravity = false;
         }
 
+        // only the topmost item interactable
+        if (stack.Count > 0) SetItemPickable(stack[stack.Count - 1].item, false);
+
         stack.Add(new StackEntry { item = item, utensilId = register.UtensilId, topY = newTopY });
         currentTopY = newTopY;
 
@@ -82,13 +83,24 @@ public class TowerController : MonoBehaviour, IPlaceable
     {
         bool ok = stack.Select(e => e.utensilId).SequenceEqual(utensilOrder);
         KitchenTowerEvents.OnTowerBuiltEvent(ok, towerId);
-        if (ok) solved = true;
+        if (ok)
+        {
+            solved = true;
+            LockStack(); // freeze the finished tower
+        }
+    }
+
+    private void LockStack()
+    {
+        foreach (StackEntry entry in stack)
+            SetItemPickable(entry.item, false);
     }
 
     private void LateUpdate()
     {
         if (solved) return;
 
+        bool popped = false;
         while (stack.Count > 0)
         {
             StackEntry top = stack[stack.Count - 1];
@@ -96,9 +108,22 @@ public class TowerController : MonoBehaviour, IPlaceable
 
             stack.RemoveAt(stack.Count - 1);
             currentTopY = stack.Count == 0 ? baseTopY : stack[stack.Count - 1].topY;
+            popped = true;
         }
+
+        // top becomes interactable
+        if (popped && stack.Count > 0)
+            SetItemPickable(stack[stack.Count - 1].item, true);
+    }
+
+    private static void SetItemPickable(PickableItem item, bool pickable)
+    {
+        if (item == null) return;
+        foreach (Collider col in item.GetComponentsInChildren<Collider>())
+            col.enabled = pickable;
     }
     
+    // get center location
     private static bool TryGetWorldBounds(GameObject go, out Bounds bounds)
     {
         Renderer[] renderers = go.GetComponentsInChildren<Renderer>();
