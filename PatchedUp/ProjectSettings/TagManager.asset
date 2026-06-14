@@ -8,6 +8,7 @@ TagManager:
   - CinemachineTarget
   - TeaCup
   - KitchenUtensil
+  - ToyBlock
   layers:
   - Default
   - TransparentFX
