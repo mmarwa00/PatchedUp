@@ -13,6 +13,7 @@ namespace Puzzles.ToyBlockPuzzle
         
         [Header("Audio")]
         [SerializeField] private AudioClip audioClip;
+        [SerializeField] private AudioClip failAudioClip;
         private AudioSource audioSource;
         [SerializeField] private AudioMixerGroup audioMixerGroup;
 
@@ -40,6 +41,8 @@ namespace Puzzles.ToyBlockPuzzle
 
             if (isPlaced) { placed++; } else { placed--; }
             
+            Debug.Log(placed);
+            
             if (designatedLetter == placedLetter && placedLetter == wordToWrite[id])
             {
                 correctlyPlaced++;
@@ -48,10 +51,16 @@ namespace Puzzles.ToyBlockPuzzle
                     OnPuzzleCompleted();
                 }
             } 
+            if (placed >= wordToWrite.Length)
+            {
+                audioSource.clip = failAudioClip;
+                audioSource.PlayOneShot(failAudioClip);
+            }
         }
 
         private void OnPuzzleCompleted()
         {
+            audioSource.clip = audioClip;
             audioSource.PlayOneShot(audioClip);
             PuzzleManager.Instance.RegisterCompletedPuzzle(true);
         }
