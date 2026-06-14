@@ -91,6 +91,7 @@ public class ProfilePuzzleController : MonoBehaviour
         if (rewardSticker != null) rewardSticker.SetActive(true);
         if (audioSource != null && config.rewardSound != null)
             audioSource.PlayOneShot(config.rewardSound);
+        PuzzleManager.Instance.RegisterCompletedPuzzle(true);
     }
     
     public struct SubmitResult

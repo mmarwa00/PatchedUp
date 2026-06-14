@@ -59,5 +59,6 @@ public class TeaCupPuzzleController : MonoBehaviour
     private void OnFinishedArrangement()
     {
         audioSource.PlayOneShot(audioClip);
+        PuzzleManager.Instance.RegisterCompletedPuzzle(true);
     }
 }

@@ -24,11 +24,15 @@ public class XylophonePuzzleController : MonoBehaviour
     private int melodyIterationAmount;
     private int successIterationAmount;
     private InputAction inputAction;
+    private InputAction interactAction;
+    private bool puzzleIsRunning;
 
     void Start()
     {
+        this.interactAction = InputSystem.actions.FindAction("Interact");
         targetSequence = melodyConfig.GetSequence();
         successIterationAmount = 0;
+        puzzleIsRunning = false;
     }
 
     void OnEnable()
@@ -68,8 +72,8 @@ public class XylophonePuzzleController : MonoBehaviour
         switch (successIterationAmount)
         {
             case 0: targetSequence = melodyConfig.GetSequence(); break;
-            case 1: targetSequence = melodyConfig.GetPentatonicSequence(5); break;
-            case 2: targetSequence = melodyConfig.GetRandomSequence(7); break;
+            case 1: targetSequence = melodyConfig.GetPentatonicSequence(4); break;
+            case 2: targetSequence = melodyConfig.GetPentatonicSequence(5); break;
             default: targetSequence = melodyConfig.GetSequence(); break;
         }
         
@@ -122,17 +126,36 @@ public class XylophonePuzzleController : MonoBehaviour
         successIterationAmount++;
         StartCoroutine(HandleSuccess());
     }
+    
+    private IEnumerator WaitThenStart()
+    {
+        yield return new WaitForSeconds(2f);
+        StartCoroutine(PlayPuzzleMelody());
+    }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Player") && this.interactAction.WasPressedThisFrame())
+        {
+            if(puzzleIsRunning) return;
+            StartCoroutine(WaitThenStart());
+            puzzleIsRunning = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            StartCoroutine(PlayPuzzleMelody());
+            StopAllCoroutines();
+            puzzleIsRunning = false;  
         }
+        
     }
 
     private void PuzzleComplete()
     {
         Debug.Log("Puzzle Complete");
+        PuzzleManager.Instance.RegisterCompletedPuzzle(true);
     }
 }
