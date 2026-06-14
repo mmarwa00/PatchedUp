@@ -134,5 +134,6 @@ public class XylophonePuzzleController : MonoBehaviour
     private void PuzzleComplete()
     {
         Debug.Log("Puzzle Complete");
+        PuzzleManager.Instance.RegisterCompletedPuzzle(true);
     }
 }

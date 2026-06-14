@@ -56,6 +56,7 @@ namespace Puzzles.KitchenTowerPuzzle
         {
             onPuzzleSolved?.Invoke();
             KitchenTowerEvents.OnPuzzleSolvedEvent();
+            PuzzleManager.Instance.RegisterCompletedPuzzle(true);
         }
     }
 }

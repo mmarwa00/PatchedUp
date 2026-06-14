@@ -53,6 +53,7 @@ namespace Puzzles.ToyBlockPuzzle
         private void OnPuzzleCompleted()
         {
             audioSource.PlayOneShot(audioClip);
+            PuzzleManager.Instance.RegisterCompletedPuzzle(true);
         }
     }
 }

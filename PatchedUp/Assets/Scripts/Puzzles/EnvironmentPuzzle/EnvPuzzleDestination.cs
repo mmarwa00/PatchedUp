@@ -6,6 +6,7 @@ public class EnvPuzzleDestination : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            PuzzleManager.Instance.RegisterCompletedPuzzle(true);
             Destroy(gameObject);
         }
     }
