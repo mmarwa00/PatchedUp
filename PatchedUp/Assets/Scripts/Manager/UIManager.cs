@@ -37,7 +37,29 @@ public class UIManager : ManagerBase
     }
 
     public void ShowGameOverScreen(bool state) {
-        if (gameOverCanvas != null) gameOverCanvas.SetActive(state);
+        if (gameOverCanvas != null) {
+            gameOverCanvas.SetActive(state);
+        }
+
+        if (state) {
+            Time.timeScale = 0f;
+
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+
+            var playerInputs = UnityEngine.Object.FindAnyObjectByType<StarterAssets.StarterAssetsInputs>();
+            if (playerInputs != null) {
+                playerInputs.cursorInputForLook = false;
+                playerInputs.cursorLocked = false;
+            }
+
+            Debug.Log("[UIManager] Game-Over geöffnet. Mauszeiger rigoros für UI freigegeben!");
+        }
+        else {
+            // Wenn das Menü geschlossen wird (z.B. beim Restart), Zeit wieder laufen lassen
+            Time.timeScale = 1f;
+        }
     }
     public void ShowYouWonScreen(bool state) {
         if (youWonCanvas != null) youWonCanvas.SetActive(state);

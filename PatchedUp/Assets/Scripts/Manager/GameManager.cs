@@ -141,7 +141,7 @@ public class GameManager : ManagerBase {
         }
         else if (_catchCount >= 2) {
             Debug.Log("[GameManager] Zweiter Hit! Game Over.");
-            player.FreezePlayer();
+            //player.FreezePlayer();
 
             App.Instance.GetManager<UIManager>().ShowGameOverScreen(true);
 
