@@ -22,8 +22,6 @@ public class PlayerInteraction : MonoBehaviour {
     }
 
     private void Update() {
-        Debug.Log($"interact={_input.interact}");
-
         if (_input.interact) {
             _input.interact = false;
 
@@ -32,27 +30,26 @@ public class PlayerInteraction : MonoBehaviour {
                 return;
             }
 
+            // Erst Raycast versuchen
             Ray ray = _mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
             if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance)) {
+                Debug.Log($"[PlayerInteraction] Raycast trifft: {hit.collider.gameObject.name}");
+                if (TryInteractWith(hit.collider.gameObject)) return;
+            }
 
-                AbilityItem abilityItem = hit.collider.GetComponent<AbilityItem>();
-                if (abilityItem != null) {
-                    PickupToInventory(abilityItem);
-                    return;
-                }
-
-                IPickable pickable = hit.collider.GetComponent<IPickable>();
-                if (pickable != null) {
-                    Pickup(pickable, hit.collider.gameObject);
-                    return;
-                }
-
-                IInteractable interactable = hit.collider.GetComponent<IInteractable>();
-                if (interactable != null) {
-                    Debug.Log("[E] " + interactable.GetHintText());
-                    interactable.Interact();
+            // Fallback: nächstes Item per OverlapSphere
+            Collider[] hits = Physics.OverlapSphere(transform.position, interactionDistance, ~0, QueryTriggerInteraction.Collide);
+            GameObject closest = null;
+            float closestDist = float.MaxValue;
+            foreach (var col in hits) {
+                if (col.gameObject == gameObject) continue;
+                float dist = Vector3.Distance(transform.position, col.transform.position);
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closest = col.gameObject;
                 }
             }
+            if (closest != null) TryInteractWith(closest);
         }
 
         if (_carriedItem != null) {
@@ -60,6 +57,32 @@ public class PlayerInteraction : MonoBehaviour {
             itemTransform.position = handPosition.position;
             itemTransform.rotation = handPosition.rotation;
         }
+    }
+
+    private bool TryInteractWith(GameObject obj) {
+        AbilityItem abilityItem = obj.GetComponent<AbilityItem>();
+        if (abilityItem == null) abilityItem = obj.GetComponentInParent<AbilityItem>();
+        if (abilityItem != null) {
+            PickupToInventory(abilityItem);
+            return true;
+        }
+
+        IPickable pickable = obj.GetComponent<IPickable>();
+        if (pickable == null) pickable = obj.GetComponentInParent<IPickable>();
+        if (pickable != null) {
+            Pickup(pickable, obj);
+            return true;
+        }
+
+        IInteractable interactable = obj.GetComponent<IInteractable>();
+        if (interactable == null) interactable = obj.GetComponentInParent<IInteractable>();
+        if (interactable != null) {
+            Debug.Log("[E] " + interactable.GetHintText());
+            interactable.Interact();
+            return true;
+        }
+
+        return false;
     }
 
     private void PickupToInventory(AbilityItem item) {
