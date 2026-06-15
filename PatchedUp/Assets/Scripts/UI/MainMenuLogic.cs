@@ -12,7 +12,7 @@ public class MainMenuLogic : MonoBehaviour {
     [SerializeField] private AudioMixerGroup audioMixerGroup;
 
     public AudioSource buttonSound;
-
+    public static bool IsLoadingFromSave = false;
 
 
     void Start() {
@@ -52,6 +52,8 @@ public class MainMenuLogic : MonoBehaviour {
         buttonSound.Play();
         loading.GetComponent<Canvas>().enabled = true;
         mainMenu.GetComponent<Canvas>().enabled = false;
+
+        IsLoadingFromSave = true;
 
         SceneManager.LoadScene("zone1_greyboxing");
     }

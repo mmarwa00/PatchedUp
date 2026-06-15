@@ -20,12 +20,21 @@ public class AbilityItem : MonoBehaviour, IPickable {
         Debug.Log($"[AbilityItem] Interact ausgeführt für: {abilityName}");
 
         PlayerAbilityManager abilityManager = Object.FindAnyObjectByType<PlayerAbilityManager>();
-        if (abilityManager != null) {
-            abilityManager.OnItemPickedUp();
-            Debug.Log($"[AbilityItem] {abilityName}-Visuals am Bären aktiviert!");
-        }
-    }
+        Debug.Log($"[AbilityItem] AbilityManager gefunden: {abilityManager != null}");
+        if (abilityManager == null) return;
 
+        PlayerInventory inventory = abilityManager.GetComponent<PlayerInventory>();
+        Debug.Log($"[AbilityItem] Inventory gefunden: {inventory != null}");
+        Debug.Log($"[AbilityItem] 'this' Instanz: {this.gameObject.name}, bereits im Bag: {inventory?.ItemsInBag.Contains(this)}");
+
+        if (inventory != null && !inventory.ItemsInBag.Contains(this)) {
+            inventory.AddItem(this);
+            Debug.Log($"[AbilityItem] Nach AddItem – Bag Count: {inventory.ItemsInBag.Count}");
+        }
+
+        OnPickup();
+        abilityManager.OnItemPickedUp();
+    }
     public virtual void UseAbility(Camera mainCamera) {
         Debug.Log($"Used basic item: {abilityName}");
     }

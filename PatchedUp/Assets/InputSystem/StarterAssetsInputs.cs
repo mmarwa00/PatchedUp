@@ -15,6 +15,7 @@ namespace StarterAssets
 		public bool sprint;
         public bool crouch;
         public bool interact;
+        public bool pickUpAbility;
 
         [Header("Ability Inputs")]
         public bool useAbility;
@@ -60,8 +61,10 @@ namespace StarterAssets
         public void OnInteract(InputValue value) {
             interact = value.isPressed;
         }
-
-		public void OnUseAbility(InputValue value) {
+        public void OnPickUpAbility(InputValue value) {
+            pickUpAbility = value.isPressed;
+        }
+        public void OnUseAbility(InputValue value) {
 			useAbility = value.isPressed;
         }
 

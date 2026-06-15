@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class App : MonoBehaviour {
-    
+
     public ManagerBase[] managers;
 
     private Dictionary<Type, ManagerBase> typeToManager = new Dictionary<Type, ManagerBase>();
@@ -23,9 +23,13 @@ public class App : MonoBehaviour {
             App.instance = this;
             DontDestroyOnLoad(gameObject);
             Debug.Log("App created, loading managers...");
+
+
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else {
             Destroy(gameObject);
+            return; // Sofort abbrechen bei Klonen
         }
 
         foreach (var manager in this.managers) {
@@ -38,12 +42,36 @@ public class App : MonoBehaviour {
             yield return this.StartCoroutine(manager.Init());
         }
 
-        foreach (var manager in this.managers) {
-            yield return this.StartCoroutine(manager.Load());
-        }
+    }
 
-        // You could do a SceneChange here if you want to load a scene after all managers are initialized and loaded.
-        // e.g. Main Menu or something like that.
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+        Debug.Log($"[App] Szene erfolgreich gewechselt! Aktuelle Szene: {scene.name}");
+
+        if (MainMenuLogic.IsLoadingFromSave) {
+            MainMenuLogic.IsLoadingFromSave = false;
+
+            Debug.Log("[App] 'Continue'-Signal erkannt! Zwinge alle Manager zum Laden der Daten...");
+            StartCoroutine(LoadAllManagersRoutine());
+        }
+    }
+
+    private IEnumerator LoadAllManagersRoutine() {
+        yield return null;
+        yield return null; 
+
+        foreach (var manager in this.managers) {
+            if (manager != null) {
+                Debug.Log($"[App] Starte Load für: {manager.GetType().Name}");
+                yield return this.StartCoroutine(manager.Load());
+            }
+        }
+    }
+
+    private void OnDestroy() {
+        if (instance == this) {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
     }
 
     public T GetManager<T>() where T : class {

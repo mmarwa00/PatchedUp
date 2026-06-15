@@ -27,7 +27,7 @@ public class GameManager : ManagerBase {
         }
 
         this._catchCount = loadedData.catchCount;
-        Debug.Log($"[GameManager] Geladener Catch-Count: {this._catchCount}");
+
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null) {
@@ -39,6 +39,56 @@ public class GameManager : ManagerBase {
 
             if (controller != null) controller.enabled = true;
         }
+
+        // Wir warten einen winzigen Frame, damit in der Welt alles bereitsteht
+        yield return null;
+
+
+        if (loadedData.collectedAbilityNames != null && loadedData.collectedAbilityNames.Count > 0 && player != null) {
+
+            PlayerInventory inventory = player.GetComponent<PlayerInventory>();
+
+            if (inventory == null) {
+                PlayerAbilityManager abMan = player.GetComponent<PlayerAbilityManager>();
+                if (abMan != null) inventory = abMan.GetComponent<PlayerInventory>();
+            }
+
+            AbilityItem[] itemsInWorld = UnityEngine.Object.FindObjectsByType<AbilityItem>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+            foreach (AbilityItem item in itemsInWorld) {
+                if (item.transform.parent != player.transform && !item.transform.IsChildOf(player.transform)) {
+
+                    if (loadedData.collectedAbilityNames.Contains(item.AbilityName)) {
+
+                        if (inventory != null && inventory.ItemsInBag != null) {
+                            if (!inventory.ItemsInBag.Contains(item)) {
+                                inventory.AddItem(item); // Item im Code-Inventar registrieren!
+                                Debug.Log($"[GameManager] '{item.AbilityName}' erfolgreich ins Spieler-Inventar zurückgelegt!");
+                            }
+                        }
+
+                        item.transform.SetParent(player.transform);
+                        item.gameObject.SetActive(false);
+                        Debug.Log($"[GameManager]  '{item.AbilityName}' vom Boden entfernt.");
+                    }
+                }
+            }
+
+            PlayerAbilityManager abilityManager = player.GetComponent<PlayerAbilityManager>();
+            if (abilityManager == null) abilityManager = UnityEngine.Object.FindAnyObjectByType<PlayerAbilityManager>();
+
+            if (abilityManager != null) {
+                abilityManager.OnItemPickedUp();
+                Debug.Log("[GameManager] PlayerAbilityManager erfolgreich synchronisiert!");
+            }
+        }
+
+
+        _isPaused = false;
+        Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        Debug.Log("[GameManager] Mauszeiger erfolgreich gesperrt und versteckt!");
 
         yield break;
     }
@@ -106,7 +156,6 @@ public class GameManager : ManagerBase {
 
         App.Instance.GetManager<UIManager>().ShowYouWonScreen(true);
 
-        // FIX: Maus wird jetzt beim Sieg sauber freigegeben, damit man Buttons drücken kann!
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
@@ -116,12 +165,10 @@ public class GameManager : ManagerBase {
     public void RestartGame() {
         _catchCount = 0;
 
-        PlayerAbilityManager abilityManager = App.Instance.GetManager<PlayerAbilityManager>();
-        if (abilityManager != null) {
-            PlayerInventory inventory = abilityManager.GetComponent<PlayerInventory>();
-            if (inventory != null && inventory.ItemsInBag != null) {
-                inventory.ItemsInBag.Clear();
-            }
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null) {
+            PlayerInventory inventory = player.GetComponent<PlayerInventory>();
+            if (inventory != null) inventory.ItemsInBag.Clear();
         }
 
         SaveSystem.DeleteSave();
@@ -142,23 +189,25 @@ public class GameManager : ManagerBase {
             dataToSave.posY = currentPos.y;
             dataToSave.posZ = currentPos.z;
             Debug.Log($"[GameManager] Speicher Position: X:{dataToSave.posX}, Y:{dataToSave.posY}");
-        }
 
-        PlayerAbilityManager abilityManager = App.Instance.GetManager<PlayerAbilityManager>();
-        if (abilityManager != null) {
-            PlayerInventory inventory = abilityManager.GetComponent<PlayerInventory>();
+            // Inventory direkt vom Player holen, nicht über App-Manager!
+            PlayerInventory inventory = player.GetComponent<PlayerInventory>();
             if (inventory != null && inventory.ItemsInBag != null) {
                 dataToSave.collectedAbilityNames.Clear();
                 foreach (AbilityItem item in inventory.ItemsInBag) {
                     if (item != null) {
                         dataToSave.collectedAbilityNames.Add(item.AbilityName);
+                        Debug.Log($"[GameManager] Speichere Item: {item.AbilityName}");
                     }
                 }
+                Debug.Log($"[GameManager] {dataToSave.collectedAbilityNames.Count} Items gespeichert!");
+            }
+            else {
+                Debug.LogWarning("[GameManager] Kein PlayerInventory auf Player gefunden!");
             }
         }
 
         SaveSystem.Save(dataToSave);
-        Debug.Log("[GameManager] Die Datei liegt HIER: " + Application.persistentDataPath);
     }
 
     public void QuitGame() {

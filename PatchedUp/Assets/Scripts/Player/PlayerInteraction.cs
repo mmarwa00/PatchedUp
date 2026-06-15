@@ -3,7 +3,7 @@ using StarterAssets;
 
 public class PlayerInteraction : MonoBehaviour {
 
-    [SerializeField] private float interactionDistance = 2.0f;
+    [SerializeField] private float interactionDistance = 0.00005f;
     [SerializeField] private Transform handPosition;
 
     private StarterAssetsInputs _input;
@@ -18,8 +18,8 @@ public class PlayerInteraction : MonoBehaviour {
 
     private void Update() {
         // Reagiert auf das neue Input-System
-        if (_input.interact) {
-            _input.interact = false;
+        if (_input.pickUpAbility) {
+            _input.pickUpAbility = false;
 
             if (_carriedItem != null) {
                 Drop();
@@ -71,18 +71,18 @@ public class PlayerInteraction : MonoBehaviour {
 
         item.OnPickup();
 
-        PlayerAbilityManager abilityManager = Object.FindAnyObjectByType<PlayerAbilityManager>();
-        if (abilityManager != null) {
-            abilityManager.OnItemPickedUp();
-            Debug.Log("[PlayerInteraction] Bären-Manager über Pickup informiert!");
-        }
-
         _inventory.AddItem(item);
 
         item.transform.SetParent(handPosition);
         item.transform.localPosition = Vector3.zero;
         item.transform.localRotation = Quaternion.identity;
         item.gameObject.SetActive(false);
+
+        PlayerAbilityManager abilityManager = Object.FindAnyObjectByType<PlayerAbilityManager>();
+        if (abilityManager != null) {
+            abilityManager.OnItemPickedUp();
+            Debug.Log("[PlayerInteraction] Bären-Manager über Pickup informiert!");
+        }
 
         Debug.Log($"[PlayerInteraction] {item.AbilityName} erfolgreich im Inventar verstaut!");
     }
