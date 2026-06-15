@@ -17,7 +17,9 @@ public class XylophoneGlowEffect : MonoBehaviour
         if (keyRenderer == null) keyRenderer = GetComponent<Renderer>();
         propBlock = new MaterialPropertyBlock();
         
-        keyRenderer.sharedMaterial.EnableKeyword("_EMISSION");
+        Material mat = keyRenderer.material;
+        mat.EnableKeyword("_EMISSION");
+        mat.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
     }
 
     public void PlayGlow()
