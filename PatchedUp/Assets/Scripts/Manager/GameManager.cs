@@ -5,8 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-public class GameManager : ManagerBase
-{
+public class GameManager : ManagerBase {
     private int _catchCount = 0;
     private bool _isPaused = false;
 
@@ -22,9 +21,8 @@ public class GameManager : ManagerBase
 
         SaveData loadedData = SaveSystem.Load();
 
-        // Wenn keine Datei existiert
         if (loadedData == null) {
-            Debug.Log("[GameManager] Keine save.json gefunden oder Neues Spiel gestartet. Nutze Standard-Startwerte.");
+            Debug.Log("[GameManager] Keine save.json gefunden. Nutze Standard-Startwerte.");
             yield break;
         }
 
@@ -33,8 +31,6 @@ public class GameManager : ManagerBase
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null) {
-
-            // Controller kurz ausschalten, ihn teleportieren, und wieder einschalten!
             CharacterController controller = player.GetComponent<CharacterController>();
             if (controller != null) controller.enabled = false;
 
@@ -42,19 +38,6 @@ public class GameManager : ManagerBase
             Debug.Log($"[GameManager] Spieler erfolgreich teleportiert nach X: {loadedData.posX}, Y: {loadedData.posY}");
 
             if (controller != null) controller.enabled = true;
-        }
-
-        PlayerAbilityManager abilityManager = App.Instance.GetManager<PlayerAbilityManager>();
-        if (abilityManager != null) {
-            PlayerInventory inventory = abilityManager.GetComponent<PlayerInventory>();
-            if (inventory != null && inventory.ItemsInBag != null) {
-                inventory.ItemsInBag.Clear();
-
-
-                foreach (string abilityName in loadedData.collectedAbilityNames) {
-                    // Beispiel: inventory.AddLoadedItemByName(abilityName);
-                }
-            }
         }
 
         yield break;
@@ -97,6 +80,7 @@ public class GameManager : ManagerBase
         Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");
     }
+
     public void PlayerCaught(CaptureSystem player) {
         _catchCount++;
 
@@ -109,7 +93,6 @@ public class GameManager : ManagerBase
             Debug.Log("[GameManager] Zweiter Hit! Game Over.");
             player.FreezePlayer();
 
-            // UIManager über die App-Zentrale rufen!
             App.Instance.GetManager<UIManager>().ShowGameOverScreen(true);
 
             Cursor.lockState = CursorLockMode.None;
@@ -123,29 +106,25 @@ public class GameManager : ManagerBase
 
         App.Instance.GetManager<UIManager>().ShowYouWonScreen(true);
 
-        // Maus freigeben (falls man doch schneller klicken will)
-        //Cursor.lockState = CursorLockMode.None;
-        //Cursor.visible = true;
+        // FIX: Maus wird jetzt beim Sieg sauber freigegeben, damit man Buttons drücken kann!
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
 
-        // Unity wartet exakt 10.0f Sekunden und ruft dann automatisch "QuitGame" auf!
         Invoke("QuitGame", 10.0f);
     }
 
     public void RestartGame() {
-
         _catchCount = 0;
 
         PlayerAbilityManager abilityManager = App.Instance.GetManager<PlayerAbilityManager>();
         if (abilityManager != null) {
-
             PlayerInventory inventory = abilityManager.GetComponent<PlayerInventory>();
             if (inventory != null && inventory.ItemsInBag != null) {
                 inventory.ItemsInBag.Clear();
             }
         }
 
-        SaveSystem.DeleteSave(); 
-
+        SaveSystem.DeleteSave();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
@@ -154,11 +133,7 @@ public class GameManager : ManagerBase
 
         SaveData dataToSave = new SaveData();
         dataToSave.lastPlayedUtcTicks = DateTime.UtcNow.Ticks;
-
         dataToSave.catchCount = this._catchCount;
-
-        // Wie viele Puzzles gelöst wurden (falls du eine Variable dafür hast)
-        // dataToSave.solvedPuzzlesCount = this._solvedPuzzlesCount;
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null) {
@@ -173,9 +148,7 @@ public class GameManager : ManagerBase
         if (abilityManager != null) {
             PlayerInventory inventory = abilityManager.GetComponent<PlayerInventory>();
             if (inventory != null && inventory.ItemsInBag != null) {
-
                 dataToSave.collectedAbilityNames.Clear();
-
                 foreach (AbilityItem item in inventory.ItemsInBag) {
                     if (item != null) {
                         dataToSave.collectedAbilityNames.Add(item.AbilityName);
@@ -185,16 +158,14 @@ public class GameManager : ManagerBase
         }
 
         SaveSystem.Save(dataToSave);
-        // Druckt den exakten Pfad als anklickbaren Link in die Unity-Console!
         Debug.Log("[GameManager] Die Datei liegt HIER: " + Application.persistentDataPath);
-
     }
 
     public void QuitGame() {
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
-            Application.Quit();
+        Application.Quit();
 #endif
     }
 }

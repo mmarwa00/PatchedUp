@@ -59,37 +59,41 @@ public class PlayerAbilityManager : ManagerBase {
 
     private void Awake() {
         _input = GetComponent<StarterAssetsInputs>();
+
         if (playerInventory == null) playerInventory = GetComponent<PlayerInventory>();
+
+        if (inventoryMenuUI == null) inventoryMenuUI = Object.FindAnyObjectByType<InventoryMenuUI>();
     }
 
     private void Update() {
+        if (inventoryMenuUI != null && inventoryMenuUI.IsMenuOpen) return;
+
         HandleAbilityCycling();
         HandleAbilityUsage();
-        if (inventoryMenuUI != null && inventoryMenuUI.IsMenuOpen) return;
     }
 
     public void SetupInventoryReferences(PlayerInventory inventory, InventoryMenuUI menuUI) {
         this.playerInventory = inventory;
         this.inventoryMenuUI = menuUI;
-
         Debug.Log("[PlayerAbilityManager] Inventar und Menü-UI erfolgreich aus der Spielszene gekoppelt!");
     }
+
     private void HandleAbilityCycling() {
         if (_input == null) return;
 
-        if (_input.switchAbility) {
-            _input.switchAbility = false;
+        if (_input.switchAbility || Input.GetKeyDown(KeyCode.C)) {
+            _input.switchAbility = false; 
 
             var items = playerInventory.ItemsInBag;
             if (items.Count <= 1) {
-                Debug.Log("Keine weiteren Fähigkeiten zum Wechseln da.");
+                Debug.Log("[PlayerAbilityManager] Keine weiteren Fähigkeiten zum Wechseln da.");
                 return;
             }
 
             _currentSelectedSlot = (_currentSelectedSlot + 1) % items.Count;
             string activeAbility = items[_currentSelectedSlot].AbilityName;
 
-            Debug.Log($"[C] Wechsel zu Bär mit: {activeAbility}");
+            Debug.Log($"[PlayerAbilityManager]  Wechsel zu Bär mit: {activeAbility} (Slot: {_currentSelectedSlot})");
             UpdatePhysicalBearVisuals(activeAbility);
         }
     }
@@ -129,11 +133,19 @@ public class PlayerAbilityManager : ManagerBase {
     }
 
     public void OnItemPickedUp() {
-        if (_currentSelectedSlot == -1 && playerInventory.ItemsInBag.Count > 0) {
-            _currentSelectedSlot = 0;
-            if (bodyNormal != null) { // Falls Körper schon registriert sind, direkt updaten
-                UpdatePhysicalBearVisuals(playerInventory.ItemsInBag[_currentSelectedSlot].AbilityName);
+        var items = playerInventory.ItemsInBag;
+
+        if (items.Count > 0) {
+            if (_currentSelectedSlot == -1) {
+                _currentSelectedSlot = 0;
             }
+            else {
+                _currentSelectedSlot = items.Count - 1;
+            }
+
+            string activeAbility = items[_currentSelectedSlot].AbilityName;
+            Debug.Log($"[PlayerAbilityManager] neues Item aufgesammelt! Rüste sofort aus: {activeAbility}");
+            UpdatePhysicalBearVisuals(activeAbility);
         }
     }
 }

@@ -56,7 +56,7 @@ public class AudioManager : ManagerBase {
 
             musicSource.Stop();
             musicSource.clip = targetClip;
-            musicSource.loop = true; // Musik soll im Hintergrund immer loopen!
+            musicSource.loop = true;
             musicSource.Play();
             Debug.Log($"[AudioManager] Spiele jetzt: {targetClip.name}");
         }

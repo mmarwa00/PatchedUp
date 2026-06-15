@@ -114,8 +114,13 @@ public class IntroController : MonoBehaviour
         yield return new WaitForSeconds(12.0f);
 
         // 5. Load the MainMenu scene
-  
-        SceneManager.LoadScene("MainMenu");
+        if (musicSource != null) {
+            musicSource.Stop();
+            musicSource.clip = null;
+            Debug.Log("[IntroController] Intro-Musik erfolgreich vernichtet. Bereit für Zone 1!");
+        }
+
+        SceneManager.LoadScene("zone1_greyboxing");
     }
 
     private IEnumerator FadeAndSwitchMusic(AudioClip nextClip, float duration)

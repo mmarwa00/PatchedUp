@@ -2,24 +2,22 @@ using UnityEngine;
 using StarterAssets;
 
 public class PlayerInteraction : MonoBehaviour {
-    
-    
-    [SerializeField] private float interactionDistance = 3.0f;
+
+    [SerializeField] private float interactionDistance = 2.0f;
     [SerializeField] private Transform handPosition;
 
-    private Camera _mainCamera;
     private StarterAssetsInputs _input;
     private PlayerInventory _inventory;
     private int currentEquippedIndex = 0;
     private IPickable _carriedItem;
 
     private void Start() {
-        _mainCamera = Camera.main;
         _input = GetComponent<StarterAssetsInputs>();
-        _inventory = GetComponent<PlayerInventory>();   
+        _inventory = GetComponent<PlayerInventory>();
     }
 
     private void Update() {
+        // Reagiert auf das neue Input-System
         if (_input.interact) {
             _input.interact = false;
 
@@ -28,27 +26,37 @@ public class PlayerInteraction : MonoBehaviour {
                 return;
             }
 
-            Ray ray = _mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-            if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance)) {
+            Debug.Log("[PlayerInteraction] [E] gedrückt! Suche Items in der Nähe...");
 
-                AbilityItem abilityItem = hit.collider.GetComponent<AbilityItem>();
+            // scannen eine unsichtbare Kugel um den Spieler herum
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, interactionDistance);
+
+            AbilityItem closestAbilityItem = null;
+            float closestDistance = float.MaxValue;
+
+            foreach (var col in hitColliders) {
+                // Suchen, ob das getroffene Ding ein AbilityItem ist (auch in Eltern-Objekten)
+                AbilityItem abilityItem = col.GetComponent<AbilityItem>();
+                if (abilityItem == null) abilityItem = col.GetComponentInParent<AbilityItem>();
+
                 if (abilityItem != null) {
-                    PickupToInventory(abilityItem);
-                    return;
-                }
-
-                IPickable pickable = hit.collider.GetComponent<IPickable>();
-                if (pickable != null) {
-                    Pickup(pickable, hit.collider.gameObject);
-                    return;
-                }
-
-                IInteractable interactable = hit.collider.GetComponent<IInteractable>();
-                if (interactable != null) {
-                    Debug.Log("[E] " + interactable.GetHintText());
-                    interactable.Interact();
+                    // Wir berechnen den Abstand, um das allernächste Item zu schnappen
+                    float dist = Vector3.Distance(transform.position, abilityItem.transform.position);
+                    if (dist < closestDistance) {
+                        closestDistance = dist;
+                        closestAbilityItem = abilityItem;
+                    }
                 }
             }
+
+            // Wenn wir ein AbilityItem im Umkreis gefunden haben, sammeln wir es auf!
+            if (closestAbilityItem != null) {
+                Debug.Log($"[PlayerInteraction] Item über Nähe gefunden: {closestAbilityItem.AbilityName}!");
+                PickupToInventory(closestAbilityItem);
+                return;
+            }
+
+            Debug.Log("[PlayerInteraction] Kein gültiges AbilityItem im Umkreis gefunden.");
         }
 
         if (_carriedItem != null) {
@@ -59,21 +67,25 @@ public class PlayerInteraction : MonoBehaviour {
     }
 
     private void PickupToInventory(AbilityItem item) {
+        Debug.Log($"[PlayerInteraction] Sammle Fähigkeit auf: {item.AbilityName}");
 
         item.OnPickup();
+
+        PlayerAbilityManager abilityManager = Object.FindAnyObjectByType<PlayerAbilityManager>();
+        if (abilityManager != null) {
+            abilityManager.OnItemPickedUp();
+            Debug.Log("[PlayerInteraction] Bären-Manager über Pickup informiert!");
+        }
+
+        _inventory.AddItem(item);
 
         item.transform.SetParent(handPosition);
         item.transform.localPosition = Vector3.zero;
         item.transform.localRotation = Quaternion.identity;
+        item.gameObject.SetActive(false);
 
-        _inventory.AddItem(item);
-
-        if (_inventory.ItemsInBag.Count == 1) { 
-            currentEquippedIndex = 0;
-            item.gameObject.SetActive(true);
-        }
+        Debug.Log($"[PlayerInteraction] {item.AbilityName} erfolgreich im Inventar verstaut!");
     }
-
 
     private void Pickup(IPickable item, GameObject obj) {
         _carriedItem = item;
@@ -83,22 +95,17 @@ public class PlayerInteraction : MonoBehaviour {
     }
 
     private void Drop() {
-
-        Ray ray = _mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance)) {
-            IPlaceable placeable = hit.collider.GetComponent<IPlaceable>();
-            PickableItem item = (_carriedItem as MonoBehaviour).GetComponent<PickableItem>();
-
-            if (placeable != null && placeable.CanPlace(item)) {
-                placeable.Place(item);
-                _carriedItem = null;
-                return;
-            }
+        if (_carriedItem != null) {
+            GameObject obj = (_carriedItem as MonoBehaviour).gameObject;
+            obj.transform.SetParent(null);
+            obj.transform.position = transform.position + transform.forward * 0.5f;
+            _carriedItem.OnDrop();
+            _carriedItem = null;
         }
+    }
 
-        GameObject obj = (_carriedItem as MonoBehaviour).gameObject;
-        obj.transform.SetParent(null);
-        _carriedItem.OnDrop();
-        _carriedItem = null;
+    private void OnDrawGizmosSelected() {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, interactionDistance);
     }
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 public class AbilityItem : MonoBehaviour, IPickable {
     [SerializeField] private string abilityName = "";
     private Rigidbody _rb;
+
     [Header("Journal Visuals")]
     [SerializeField] private Sprite itemIcon;
 
@@ -15,7 +16,15 @@ public class AbilityItem : MonoBehaviour, IPickable {
 
     public string GetHintText() => $"[E] Take {abilityName}";
 
-    public void Interact() { }
+    public void Interact() {
+        Debug.Log($"[AbilityItem] Interact ausgeführt für: {abilityName}");
+
+        PlayerAbilityManager abilityManager = Object.FindAnyObjectByType<PlayerAbilityManager>();
+        if (abilityManager != null) {
+            abilityManager.OnItemPickedUp();
+            Debug.Log($"[AbilityItem] {abilityName}-Visuals am Bären aktiviert!");
+        }
+    }
 
     public virtual void UseAbility(Camera mainCamera) {
         Debug.Log($"Used basic item: {abilityName}");

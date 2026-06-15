@@ -6335,7 +6335,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAbilityManager
   allAvailableAbilityPrefabs:
-  - {fileID: 0}
+  - {fileID: 6816894240520685678, guid: 7559343d9a02dfa44b3a2b29427b0a67, type: 3}
+  - {fileID: 6090321513471060914, guid: 9abf000ecd6684245b7f81251ed5abba, type: 3}
 --- !u!4 &1554165962
 Transform:
   m_ObjectHideFlags: 0

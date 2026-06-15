@@ -53,7 +53,7 @@ public class MainMenuLogic : MonoBehaviour {
         loading.GetComponent<Canvas>().enabled = true;
         mainMenu.GetComponent<Canvas>().enabled = false;
 
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("zone1_greyboxing");
     }
 
     public void OptionsButton() {
