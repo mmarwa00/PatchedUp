@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿/*using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 namespace DoorScript
@@ -40,4 +40,58 @@ public class Door : MonoBehaviour {
 		asource.Play ();
 	}
 }
+}*/
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace DoorScript
+{
+    [RequireComponent(typeof(AudioSource))]
+    public class Door : MonoBehaviour
+    {
+        [Header("Tür-Zustand")]
+        [Tooltip("Ist der Gegner im Raum?")]
+        public bool enemyInside;
+
+        [Header("Winkel-Einstellungen")]
+        [SerializeField] private float doorSpaltAngle = -15.0f; // Der Standard-Spalt (leicht offen)
+        [SerializeField] private float doorFullOpenAngle = -90.0f; // Ganz offen, wenn der Gegner kommt
+
+        [Header("Geschwindigkeit & Sound")]
+        public float smooth = 1.0f;
+        public AudioSource asource;
+        public AudioClip openDoor, closeDoor;
+
+        void Start()
+        {
+            asource = GetComponent<AudioSource>();
+        }
+
+        void Update()
+        {
+            // Wenn der Enemy da ist, rotiere zum ganz offenen Winkel, sonst halte den Spalt
+            float targetAngle = enemyInside ? doorFullOpenAngle : doorSpaltAngle;
+
+            Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
+            transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime * 5 * smooth);
+        }
+
+        // Diese Funktion kannst du von deinem Trigger oder Gegner-Skript aus aufrufen
+        public void SetEnemyInside(bool isInside)
+        {
+            // Verhindert, dass der Sound doppelt triggert, wenn sich nichts ändert
+            if (enemyInside == isInside) return;
+
+            enemyInside = isInside;
+
+            // Sound abspielen
+            if (asource != null)
+            {
+                asource.clip = enemyInside ? openDoor : closeDoor;
+                asource.Play();
+            }
+        }
+    }
 }
