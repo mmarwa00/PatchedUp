@@ -2265,31 +2265,31 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1516045761}
     m_Modifications:
     - target: {fileID: 7455588679148304716, guid: 7db1eb5213402fe4ca778527c3f8892a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7455588679148304716, guid: 7db1eb5213402fe4ca778527c3f8892a, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7455588679148304716, guid: 7db1eb5213402fe4ca778527c3f8892a, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7455588679148304716, guid: 7db1eb5213402fe4ca778527c3f8892a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.161
+      value: 0.6816848
       objectReference: {fileID: 0}
     - target: {fileID: 7455588679148304716, guid: 7db1eb5213402fe4ca778527c3f8892a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.25
+      value: -0.0072151423
       objectReference: {fileID: 0}
     - target: {fileID: 7455588679148304716, guid: 7db1eb5213402fe4ca778527c3f8892a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.685
+      value: 1.03423
       objectReference: {fileID: 0}
     - target: {fileID: 7455588679148304716, guid: 7db1eb5213402fe4ca778527c3f8892a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2297,7 +2297,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7455588679148304716, guid: 7db1eb5213402fe4ca778527c3f8892a, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7455588679148304716, guid: 7db1eb5213402fe4ca778527c3f8892a, type: 3}
       propertyPath: m_LocalRotation.y
@@ -2551,6 +2551,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a21425f1a6caa0408ca068b239f5723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PickableItem
+--- !u!4 &234148935 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2378363002651284422, guid: 82bbee29cc0120b4aad230f9753b59f3, type: 3}
+  m_PrefabInstance: {fileID: 981540038}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &237914516
 GameObject:
   m_ObjectHideFlags: 0
@@ -3023,6 +3028,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a21425f1a6caa0408ca068b239f5723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PickableItem
+--- !u!4 &262958509 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2958053598938902255, guid: 24f00a7879bd0b04ebec708c7c136294, type: 3}
+  m_PrefabInstance: {fileID: 1225357921}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &275289366
 GameObject:
   m_ObjectHideFlags: 0
@@ -6448,7 +6458,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1828942784052636205, guid: 0b021bbda6933264383bdc6625e3bd34, type: 3}
       propertyPath: locationId
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1828942784052636205, guid: 0b021bbda6933264383bdc6625e3bd34, type: 3}
       propertyPath: designatedLetter
@@ -6675,6 +6685,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 9131095311726679916, guid: 0b021bbda6933264383bdc6625e3bd34, type: 3}
       insertIndex: -1
       addedObject: {fileID: 317693847}
+    - targetCorrespondingSourceObject: {fileID: 3839713242082415933, guid: 0b021bbda6933264383bdc6625e3bd34, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1059167771}
+    - targetCorrespondingSourceObject: {fileID: 3839713242082415933, guid: 0b021bbda6933264383bdc6625e3bd34, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 234148935}
+    - targetCorrespondingSourceObject: {fileID: 3839713242082415933, guid: 0b021bbda6933264383bdc6625e3bd34, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 262958509}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0b021bbda6933264383bdc6625e3bd34, type: 3}
 --- !u!1 &603167250
@@ -9340,6 +9359,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeaCupSnapRegister
   cupId: 0
+  repickDistance: 0.3
 --- !u!1001 &720247685
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10148,6 +10168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeaCupSnapRegister
   cupId: 2
+  repickDistance: 0.3
 --- !u!1 &790257630
 GameObject:
   m_ObjectHideFlags: 0
@@ -14946,31 +14967,31 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1516045761}
     m_Modifications:
     - target: {fileID: 2378363002651284422, guid: 82bbee29cc0120b4aad230f9753b59f3, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2378363002651284422, guid: 82bbee29cc0120b4aad230f9753b59f3, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2378363002651284422, guid: 82bbee29cc0120b4aad230f9753b59f3, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2378363002651284422, guid: 82bbee29cc0120b4aad230f9753b59f3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.1782936
+      value: -0.1665492
       objectReference: {fileID: 0}
     - target: {fileID: 2378363002651284422, guid: 82bbee29cc0120b4aad230f9753b59f3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.25
+      value: -0.0072151423
       objectReference: {fileID: 0}
     - target: {fileID: 2378363002651284422, guid: 82bbee29cc0120b4aad230f9753b59f3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.773
+      value: 0.81422985
       objectReference: {fileID: 0}
     - target: {fileID: 2378363002651284422, guid: 82bbee29cc0120b4aad230f9753b59f3, type: 3}
       propertyPath: m_LocalRotation.w
@@ -14978,7 +14999,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2378363002651284422, guid: 82bbee29cc0120b4aad230f9753b59f3, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2378363002651284422, guid: 82bbee29cc0120b4aad230f9753b59f3, type: 3}
       propertyPath: m_LocalRotation.y
@@ -15693,6 +15714,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a21425f1a6caa0408ca068b239f5723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PickableItem
+--- !u!4 &1059167771 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7455588679148304716, guid: 7db1eb5213402fe4ca778527c3f8892a, type: 3}
+  m_PrefabInstance: {fileID: 208009075}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1060473859
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23379,7 +23405,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1516045761}
     m_Modifications:
     - target: {fileID: 2469888769652814933, guid: 24f00a7879bd0b04ebec708c7c136294, type: 3}
       propertyPath: m_Name
@@ -23391,27 +23417,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2958053598938902255, guid: 24f00a7879bd0b04ebec708c7c136294, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2958053598938902255, guid: 24f00a7879bd0b04ebec708c7c136294, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2958053598938902255, guid: 24f00a7879bd0b04ebec708c7c136294, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2958053598938902255, guid: 24f00a7879bd0b04ebec708c7c136294, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.511
+      value: 1.5566845
       objectReference: {fileID: 0}
     - target: {fileID: 2958053598938902255, guid: 24f00a7879bd0b04ebec708c7c136294, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.2499998
+      value: -0.007214546
       objectReference: {fileID: 0}
     - target: {fileID: 2958053598938902255, guid: 24f00a7879bd0b04ebec708c7c136294, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.678
+      value: 1.0517299
       objectReference: {fileID: 0}
     - target: {fileID: 2958053598938902255, guid: 24f00a7879bd0b04ebec708c7c136294, type: 3}
       propertyPath: m_LocalRotation.w
@@ -23419,7 +23445,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2958053598938902255, guid: 24f00a7879bd0b04ebec708c7c136294, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2958053598938902255, guid: 24f00a7879bd0b04ebec708c7c136294, type: 3}
       propertyPath: m_LocalRotation.y
@@ -25968,6 +25994,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 9171500859130253814, guid: ddaeb73f60bbfb043a640883d3f6be01, type: 3}
   m_PrefabInstance: {fileID: 1505403871}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1516045761 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3839713242082415933, guid: 0b021bbda6933264383bdc6625e3bd34, type: 3}
+  m_PrefabInstance: {fileID: 593616039}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1532946978
 PrefabInstance:
@@ -32354,6 +32385,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeaCupSnapRegister
   cupId: 3
+  repickDistance: 0.3
 --- !u!1001 &1676636160
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32834,15 +32866,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1732625289488234461, guid: 6d051c01ff762464b87361c24e20a879, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.23
+      value: -1.221
       objectReference: {fileID: 0}
     - target: {fileID: 1732625289488234461, guid: 6d051c01ff762464b87361c24e20a879, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.749
+      value: -1.364
       objectReference: {fileID: 0}
     - target: {fileID: 1732625289488234461, guid: 6d051c01ff762464b87361c24e20a879, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.048
+      value: 0.464
       objectReference: {fileID: 0}
     - target: {fileID: 6538264606691453254, guid: 6d051c01ff762464b87361c24e20a879, type: 3}
       propertyPath: m_LocalPosition.x
@@ -33662,11 +33694,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1471982033561851360, guid: ce79dbb34713241978debb72446fa860, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.7456665
+      value: 5.785
       objectReference: {fileID: 0}
     - target: {fileID: 1471982033561851360, guid: ce79dbb34713241978debb72446fa860, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.9871945
+      value: -0.77
       objectReference: {fileID: 0}
     - target: {fileID: 1471982033561851360, guid: ce79dbb34713241978debb72446fa860, type: 3}
       propertyPath: m_LocalRotation.w
@@ -33732,6 +33764,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeaCupSnapRegister
   cupId: 1
+  repickDistance: 0.3
 --- !u!1001 &1778017904
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -36873,6 +36906,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeaCupSnapRegister
   cupId: 0
+  repickDistance: 0.3
 --- !u!1 &1951110690
 GameObject:
   m_ObjectHideFlags: 0
@@ -45080,6 +45114,7 @@ SceneRoots:
   - {fileID: 1763468890}
   - {fileID: 1834904505}
   - {fileID: 1172107650}
+<<<<<<< HEAD
   - {fileID: 684133541}
   - {fileID: 114744132}
   - {fileID: 833038108}
@@ -45092,4 +45127,6 @@ SceneRoots:
   - {fileID: 208009075}
   - {fileID: 981540038}
   - {fileID: 1225357921}
+=======
+>>>>>>> 0ee6706 (fixed puzzle-player interactions)
   - {fileID: 154263869}
