@@ -1,43 +1,78 @@
 using UnityEngine;
+using System.Collections;
 
 public class HookAbility : AbilityItem {
     [Header("Hook Settings")]
-    [SerializeField] private float hookRange = 15f;
-    [SerializeField] private float pullForce = 12f;
+    [SerializeField] private float hookRange = 8f;
+    [SerializeField] private float pullSpeed = 8f;
     [SerializeField] private LayerMask pullableLayers;
+    [SerializeField] private Transform handPosition;
+
+    private bool _isPulling = false;
 
     public override void UseAbility(Camera mainCamera) {
-        if (mainCamera == null) return;
+        if (_isPulling) return;
 
         Debug.Log($"[Hook] Feure Haken ab!");
 
-        // Strahl aus der Bildschirmmitte schießen
-        Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        Collider[] hits = Physics.OverlapSphere(transform.position, hookRange, pullableLayers);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, hookRange, pullableLayers)) {
-            // Prüfen, ob das getroffene Objekt physikalisch bewegt werden kann
-            Rigidbody targetRb = hit.collider.GetComponent<Rigidbody>();
+        if (hits.Length == 0) {
+            Debug.Log("[Hook] Nichts in Reichweite.");
+            return;
+        }
 
-            if (targetRb != null) {
-                Debug.Log($"[Hook] Objekt getroffen: {hit.collider.name}! Ziehe zu mir...");
+        Collider closest = null;
+        float closestDist = float.MaxValue;
 
-                // Wir nehmen die Kameraposition als Zielpunkt
-                Vector3 pullDirection = (mainCamera.transform.position - hit.collider.transform.position).normalized;
-
-                // Leicht nach oben ziehen, damit das Objekt nicht am Boden schleift/hakt
-                pullDirection.y += 0.2f;
-                pullDirection = pullDirection.normalized;
-
-                // Wir setzen die aktuelle Geschwindigkeit kurz zurück, damit der Zug sofort knackig wirkt
-                targetRb.linearVelocity = Vector3.zero;
-                targetRb.AddForce(pullDirection * pullForce, ForceMode.Impulse);
+        foreach (var col in hits) {
+            float dist = Vector3.Distance(transform.position, col.transform.position);
+            if (dist < closestDist) {
+                closestDist = dist;
+                closest = col;
             }
-            else {
-                Debug.Log("[Hook] Objekt hat keinen Rigidbody und kann nicht bewegt werden.");
-            }
+        }
+
+        if (closest == null) return;
+
+        Rigidbody targetRb = closest.GetComponent<Rigidbody>();
+        if (targetRb != null) {
+            Debug.Log($"[Hook] Objekt getroffen: {closest.name}! Ziehe zu mir...");
+
+            CoroutineRunner.Instance.StartCoroutine(PullObject(targetRb));
         }
         else {
-            Debug.Log("[Hook] Nichts in Reichweite getroffen.");
+            Debug.Log("[Hook] Objekt hat keinen Rigidbody und kann nicht bewegt werden.");
         }
+    }
+
+    private IEnumerator PullObject(Rigidbody targetRb) {
+        Debug.Log("[Hook] PullObject Coroutine gestartet!"); 
+        _isPulling = true;
+        targetRb.useGravity = false;
+
+        Vector3 targetPos = handPosition != null ? handPosition.position : transform.position;
+        float stopDistance = 0.05f;
+
+        Debug.Log($"[Hook] targetPos={targetPos}, handPosition null? {handPosition == null}, aktuelle Distanz={Vector3.Distance(targetRb.position, targetPos)}"); 
+
+        while (targetRb != null && Vector3.Distance(targetRb.position, targetPos) > stopDistance) {
+            targetPos = handPosition != null ? handPosition.position : transform.position;
+
+            Vector3 direction = (targetPos - targetRb.position).normalized;
+            targetRb.linearVelocity = direction * pullSpeed;
+            Debug.Log($"[Hook] Ziehe... aktuelle Distanz={Vector3.Distance(targetRb.position, targetPos)}");
+
+            yield return null;
+        }
+
+        Debug.Log("[Hook] PullObject Coroutine beendet!"); 
+
+        if (targetRb != null) {
+            targetRb.linearVelocity = Vector3.zero;
+            targetRb.useGravity = true;
+        }
+
+        _isPulling = false;
     }
 }

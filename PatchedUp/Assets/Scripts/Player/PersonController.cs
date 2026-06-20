@@ -13,13 +13,13 @@ namespace StarterAssets
     {
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
-        [SerializeField] private float MoveSpeed = 1.5f;
+        [SerializeField] private float MoveSpeed = 1.0f;
         [Tooltip("Sprint speed of the character in m/s")]
-        [SerializeField] private float SprintSpeed = 3.0f;
+        [SerializeField] private float SprintSpeed = 2.0f;
         [Tooltip("Rotation speed of the character")]
         [SerializeField] private float RotationSpeed = 1.5f;
         [Tooltip("Acceleration and deceleration")]
-        [SerializeField] private float SpeedChangeRate = 10.0f;
+        [SerializeField] private float SpeedChangeRate = 5.0f;
 
         [Space(10)]
         [Tooltip("The height the player can jump")]
@@ -57,13 +57,21 @@ namespace StarterAssets
         [Tooltip("How far in degrees can you move the camera down")]
         [SerializeField] private float BottomClamp = -60.0f;
 
+        [SerializeField] private float CameraSmoothTime = 0.05f;
+        private float _pitchVelocity;
+        private float _yawVelocity;
+        private float _smoothedPitch;
+        private float _smoothedYaw;
+
         [Header("Crouch")]
         [SerializeField] private float CrouchHeight = 0.2f;
         [SerializeField] private float StandHeight = 0.4f;
         [SerializeField] private float StandCenter = 0.2f;
-        [SerializeField] private float CrouchSpeed = 1.0f;
-        private float CrouchCameraY = 0.19f;
-        private float StandCameraY = 0.39f;
+        [SerializeField] private float CrouchSpeed = 0.8f;
+
+        [SerializeField] private Vector3 CrouchCameraPosition = new Vector3(0f, 0.0716f, 0.1054f);
+        [SerializeField] private Vector3 StandCameraPosition = new Vector3(0.026f, 0.214f, 0.0633f);
+
 
         // Stun System
         [Header("Stun Settings")]
@@ -174,40 +182,35 @@ namespace StarterAssets
             }
         }
 
-        private void CameraRotation()
-        {
-            if (_input.look.sqrMagnitude >= _threshold)
-            {
+        private void CameraRotation() {
+            if (_input.look.sqrMagnitude >= _threshold) {
                 float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
-
                 _cinemachineTargetPitch += _input.look.y * RotationSpeed * deltaTimeMultiplier;
                 _rotationVelocity = _input.look.x * RotationSpeed * deltaTimeMultiplier;
-
                 _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
-
-                CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
-
-                transform.Rotate(Vector3.up * _rotationVelocity);
             }
-        }
+            else {
+                _rotationVelocity = 0f;
+            }
 
-        private void Crouch()
-        {
+            _smoothedPitch = Mathf.SmoothDamp(_smoothedPitch, _cinemachineTargetPitch, ref _pitchVelocity, CameraSmoothTime);
+            CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_smoothedPitch, 0.0f, 0.0f);
+            transform.Rotate(Vector3.up * _rotationVelocity);
+        }
+        private void Crouch() {
             if (!_canMove) return;
 
-            if (_input.crouch && !_isCrouching)
-            {
+            if (_input.crouch && !_isCrouching) {
                 _isCrouching = true;
                 _controller.height = CrouchHeight;
                 _controller.center = new Vector3(0, CrouchHeight / 2f, 0);
-                CinemachineCameraTarget.transform.localPosition = new Vector3(0, CrouchCameraY, 0.2f);
+                CinemachineCameraTarget.transform.localPosition = CrouchCameraPosition;
             }
-            else if (!_input.crouch && _isCrouching)
-            {
+            else if (!_input.crouch && _isCrouching) {
                 _isCrouching = false;
                 _controller.height = StandHeight;
                 _controller.center = new Vector3(0, StandCenter, 0);
-                CinemachineCameraTarget.transform.localPosition = new Vector3(0, StandCameraY, 0f);
+                CinemachineCameraTarget.transform.localPosition = StandCameraPosition;
 
                 _input.crouch = false;
             }
@@ -258,9 +261,7 @@ namespace StarterAssets
                 inputDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
             }
 
-            // ==========================================
-            // THE ANKLE BUMPER
-            // ==========================================
+
             if (inputDirection != Vector3.zero)
             {
                 float ankleHeightY = _controller.bounds.min.y + 0.1f;
@@ -291,7 +292,6 @@ namespace StarterAssets
                     }
                 }
             }
-            // ==========================================
             _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
         }
 

@@ -9,6 +9,9 @@ public class SaveData {
     public int catchCount;
     public int solvedPuzzlesCount;
 
+    public List<string> solvedPuzzleIds = new List<string>();
+
+
     public float posX;
     public float posY;
     public float posZ;

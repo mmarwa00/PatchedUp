@@ -29,7 +29,7 @@ public class App : MonoBehaviour {
         }
         else {
             Destroy(gameObject);
-            return; // Sofort abbrechen bei Klonen
+            return; 
         }
 
         foreach (var manager in this.managers) {
@@ -47,6 +47,18 @@ public class App : MonoBehaviour {
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
         Debug.Log($"[App] Szene erfolgreich gewechselt! Aktuelle Szene: {scene.name}");
+
+        if (scene.name == "MainMenu") {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
+        GameManager gm = App.Instance.GetManager<GameManager>();
+        if (gm != null) gm.FinishRestart();
 
         if (MainMenuLogic.IsLoadingFromSave) {
             MainMenuLogic.IsLoadingFromSave = false;

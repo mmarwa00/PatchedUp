@@ -12,14 +12,15 @@ public class PuzzleManager : ManagerBase
     
     public override IEnumerator Init()
     {
-        PuzzleManager.Instance.OnPuzzleSolved += HandlePuzzleSolved;
+        instance = this;
+        OnPuzzleSolved += HandlePuzzleSolved;
         Debug.Log("PuzzleManager initialized");
         yield break;
     }
 
     public override IEnumerator Load()
     {
-        throw new System.NotImplementedException();
+        yield break;
     }
 
     private void HandlePuzzleSolved(bool isSolved)

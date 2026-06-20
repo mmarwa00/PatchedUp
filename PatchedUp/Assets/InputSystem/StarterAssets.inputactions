@@ -278,7 +278,7 @@
                     "name": "",
                     "id": "430e3baf-3370-4c07-b09a-3e561af0a6d0",
                     "path": "<Keyboard>/leftCtrl",
-                    "interactions": "Press(behavior=2)",
+                    "interactions": "Press",
                     "processors": "",
                     "groups": ";KeyboardMouse",
                     "action": "Crouch",

@@ -66,7 +66,17 @@ public class CaptureSystem : MonoBehaviour
 
         _alreadyCaught = false;
     }
+
+    public void ResetState() {
+        StopAllCoroutines();
+        _alreadyCaught = false;
+        if (_characterController != null) _characterController.enabled = true;
+        if (_controller != null) _controller.enabled = true;
+        if (_animator != null) _animator.ResetTrigger("Die");
+    }
+
     public void RestartGameButton() {
+        Time.timeScale = 1f;
         UnityEngine.SceneManagement.SceneManager.LoadScene(
             UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
         );

@@ -17,7 +17,7 @@ public class AudioManager : ManagerBase {
 
 
         SceneManager.sceneLoaded += OnSceneLoaded;
-
+        PlayMusicForScene(SceneManager.GetActiveScene().name);
         yield break;
     }
 

@@ -56,7 +56,7 @@ namespace StarterAssets
 		}
 
         public void OnCrouch(InputValue value) {
-            CrouchInput(value.isPressed);
+            CrouchInput(!crouch);
         }
         public void OnInteract(InputValue value) {
             interact = value.isPressed;
@@ -70,10 +70,11 @@ namespace StarterAssets
 
 		public void OnSwitchAbility(InputValue value) {
             switchAbility = value.isPressed;
+            Debug.Log($"[StarterAssetsInputs] OnSwitchAbility gefeuert! isPressed={value.isPressed}");
 
         }
 
-		public void OnOpenInventory(InputValue value) {
+        public void OnOpenInventory(InputValue value) {
 			openInventory = value.isPressed;
 
             Debug.Log($"[INPUT DETECTED] Tab gedrückt! Status ist: {openInventory}");

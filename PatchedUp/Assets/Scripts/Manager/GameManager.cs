@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : ManagerBase {
     private int _catchCount = 0;
     private bool _isPaused = false;
+    private bool _isRestarting;
 
     public bool IsPaused => _isPaused;
 
@@ -132,6 +133,7 @@ public class GameManager : ManagerBase {
     }
 
     public void PlayerCaught(CaptureSystem player) {
+        if (_isRestarting) return;
         _catchCount++;
 
         if (_catchCount == 1) {
@@ -141,7 +143,7 @@ public class GameManager : ManagerBase {
         }
         else if (_catchCount >= 2) {
             Debug.Log("[GameManager] Zweiter Hit! Game Over.");
-            //player.FreezePlayer();
+            player.FreezePlayer();
 
             App.Instance.GetManager<UIManager>().ShowGameOverScreen(true);
 
@@ -163,12 +165,17 @@ public class GameManager : ManagerBase {
     }
 
     public void RestartGame() {
+        Time.timeScale = 1f;
         _catchCount = 0;
+        _isRestarting = true;
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null) {
             PlayerInventory inventory = player.GetComponent<PlayerInventory>();
             if (inventory != null) inventory.ItemsInBag.Clear();
+
+            CaptureSystem capture = player.GetComponent<CaptureSystem>();
+            if (capture != null) capture.ResetState();
         }
 
         SaveSystem.DeleteSave();
@@ -181,6 +188,13 @@ public class GameManager : ManagerBase {
         SaveData dataToSave = new SaveData();
         dataToSave.lastPlayedUtcTicks = DateTime.UtcNow.Ticks;
         dataToSave.catchCount = this._catchCount;
+
+        PuzzleManager puzzleManager = App.Instance.GetManager<PuzzleManager>();
+        if (puzzleManager != null) {
+            //dataToSave.solvedPuzzleIds = puzzleManager.GetSolvedPuzzleIds();
+            dataToSave.solvedPuzzlesCount = puzzleManager.GetCompletedPuzzleCount();
+            Debug.Log($"[GameManager] {dataToSave.solvedPuzzlesCount} gelöste Puzzles gespeichert!");
+        }
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null) {
@@ -208,6 +222,10 @@ public class GameManager : ManagerBase {
         }
 
         SaveSystem.Save(dataToSave);
+    }
+
+    public void FinishRestart() {
+        _isRestarting = false;
     }
 
     public void QuitGame() {

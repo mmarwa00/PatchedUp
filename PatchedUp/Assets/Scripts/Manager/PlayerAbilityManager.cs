@@ -34,7 +34,12 @@ public class PlayerAbilityManager : ManagerBase {
     }
 
     public override IEnumerator Init() {
-        _input = GetComponent<StarterAssetsInputs>();
+        if (_input == null) {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null) {
+                _input = player.GetComponent<StarterAssetsInputs>();
+            }
+        }
         _mainCamera = Camera.main;
         if (playerInventory == null) playerInventory = GetComponent<PlayerInventory>();
         yield break;
@@ -64,9 +69,14 @@ public class PlayerAbilityManager : ManagerBase {
         yield break;
     }
     private void Awake() {
-        _input = GetComponent<StarterAssetsInputs>();
+        if (playerInventory == null) playerInventory = Object.FindAnyObjectByType<PlayerInventory>();
 
-        if (playerInventory == null) playerInventory = GetComponent<PlayerInventory>();
+        if (_input == null) {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null) {
+                _input = player.GetComponent<StarterAssetsInputs>();
+            }
+        }
 
         if (inventoryMenuUI == null) inventoryMenuUI = Object.FindAnyObjectByType<InventoryMenuUI>();
 
@@ -87,8 +97,27 @@ public class PlayerAbilityManager : ManagerBase {
     }
 
     private void Update() {
+        if (_input == null) {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null) {
+                _input = player.GetComponent<StarterAssetsInputs>();
+                if (_input != null) {
+                    Debug.Log("[PlayerAbilityManager] _input erfolgreich nachträglich gefunden!");
+                }
+            }
+        }
+
+        if (_mainCamera == null) {
+            _mainCamera = Camera.main;
+        }
+
+
         if (inventoryMenuUI != null && inventoryMenuUI.IsMenuOpen) return;
         if (_input == null || playerInventory == null) return;
+
+        if (_input.switchAbility) {
+            Debug.Log($"[DEBUG] C erkannt! switchAbility={_input.switchAbility}, items.Count={playerInventory.ItemsInBag.Count}, currentSlot={_currentSelectedSlot}, bodyHook={bodyHook != null}, bodyPin={bodyPin != null}, bodyNormal={bodyNormal != null}");
+        }
 
         HandleAbilityCycling();
         HandleAbilityUsage();
@@ -102,8 +131,8 @@ public class PlayerAbilityManager : ManagerBase {
     private void HandleAbilityCycling() {
         if (_input == null) return;
 
-        if (_input.switchAbility || Input.GetKeyDown(KeyCode.C)) {
-            _input.switchAbility = false; 
+        if (_input.switchAbility) {
+            _input.switchAbility = false;
 
             var items = playerInventory.ItemsInBag;
             if (items.Count <= 1) {
@@ -126,13 +155,19 @@ public class PlayerAbilityManager : ManagerBase {
             _input.useAbility = false;
 
             var items = playerInventory.ItemsInBag;
+            Debug.Log($"[USE-DEBUG] F gedrückt! items.Count={items.Count}, currentSlot={_currentSelectedSlot}");
+
             if (items.Count == 0 || _currentSelectedSlot == -1) {
                 Debug.Log("Du hast keine Fähigkeit aktiv!");
                 return;
             }
 
             if (items.Count > _currentSelectedSlot && items[_currentSelectedSlot] != null) {
+                Debug.Log($"[USE-DEBUG] Rufe UseAbility auf für: {items[_currentSelectedSlot].AbilityName}, Typ: {items[_currentSelectedSlot].GetType().Name}");
                 items[_currentSelectedSlot].UseAbility(_mainCamera);
+            }
+            else {
+                Debug.Log($"[USE-DEBUG] Slot ungültig! items.Count={items.Count}, currentSlot={_currentSelectedSlot}");
             }
         }
     }
