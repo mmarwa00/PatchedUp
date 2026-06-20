@@ -2,13 +2,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class TowerController : MonoBehaviour, IPlaceable
+public class TowerController : MonoBehaviour
 {
     [Header("Tower Setup")]
     [SerializeField] private int towerId;
     [SerializeField] private int[] utensilOrder;
     [SerializeField] private Transform stackAnchor;
     [SerializeField] private float stackSpacing = 0f;
+    [SerializeField] private Transform snapZone;
 
     private struct StackEntry
     {
@@ -27,6 +28,13 @@ public class TowerController : MonoBehaviour, IPlaceable
         if (stackAnchor == null) stackAnchor = transform;
         baseTopY = GetBaseTopY();
         currentTopY = baseTopY;
+        UpdateSnapZonePosition();
+    }
+    
+    private void UpdateSnapZonePosition()
+    {
+        if (snapZone == null) return;
+        snapZone.position = new Vector3(stackAnchor.position.x, currentTopY, stackAnchor.position.z);
     }
 
     private float GetBaseTopY()
@@ -75,6 +83,7 @@ public class TowerController : MonoBehaviour, IPlaceable
 
         stack.Add(new StackEntry { item = item, utensilId = register.UtensilId, topY = newTopY });
         currentTopY = newTopY;
+        UpdateSnapZonePosition();
 
         if (stack.Count == utensilOrder.Length) CheckIfCorrect();
     }
@@ -94,6 +103,9 @@ public class TowerController : MonoBehaviour, IPlaceable
     {
         foreach (StackEntry entry in stack)
             SetItemPickable(entry.item, false);
+
+        // Finished tower stays solid (colliders untouched) but accepts no more drops.
+        if (snapZone != null) snapZone.gameObject.SetActive(false);
     }
 
     private void LateUpdate()
@@ -111,16 +123,18 @@ public class TowerController : MonoBehaviour, IPlaceable
             popped = true;
         }
 
-        // top becomes interactable
-        if (popped && stack.Count > 0)
-            SetItemPickable(stack[stack.Count - 1].item, true);
+        // top becomes interactable again, and the snap zone drops back down to the new top
+        if (popped)
+        {
+            if (stack.Count > 0) SetItemPickable(stack[stack.Count - 1].item, true);
+            UpdateSnapZonePosition();
+        }
     }
-
+    
     private static void SetItemPickable(PickableItem item, bool pickable)
     {
         if (item == null) return;
-        foreach (Collider col in item.GetComponentsInChildren<Collider>())
-            col.enabled = pickable;
+        item.SetPickable(pickable);
     }
     
     // get center location

@@ -37,7 +37,7 @@ public class PlayerInteraction : MonoBehaviour {
                 if (TryInteractWith(hit.collider.gameObject)) return;
             }
 
-            // Fallback: nächstes Item per OverlapSphere
+            // Fallback: nï¿½chstes Item per OverlapSphere
             Collider[] hits = Physics.OverlapSphere(transform.position, interactionDistance, ~0, QueryTriggerInteraction.Collide);
             GameObject closest = null;
             float closestDist = float.MaxValue;
@@ -69,7 +69,7 @@ public class PlayerInteraction : MonoBehaviour {
 
         IPickable pickable = obj.GetComponent<IPickable>();
         if (pickable == null) pickable = obj.GetComponentInParent<IPickable>();
-        if (pickable != null) {
+        if (pickable != null && (!(pickable is PickableItem pickItem) || pickItem.IsPickable)) {
             Pickup(pickable, obj);
             return true;
         }
@@ -97,7 +97,7 @@ public class PlayerInteraction : MonoBehaviour {
         PlayerAbilityManager abilityManager = Object.FindAnyObjectByType<PlayerAbilityManager>();
         if (abilityManager != null) {
             abilityManager.OnItemPickedUp();
-            Debug.Log("[PlayerInteraction] Bären-Manager über Pickup informiert!");
+            Debug.Log("[PlayerInteraction] Bï¿½ren-Manager ï¿½ber Pickup informiert!");
         }
 
         Debug.Log($"[PlayerInteraction] {item.AbilityName} erfolgreich im Inventar verstaut!");
