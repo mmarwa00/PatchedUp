@@ -62,8 +62,6 @@ namespace StarterAssets
         [SerializeField] private float StandHeight = 0.4f;
         [SerializeField] private float StandCenter = 0.2f;
         [SerializeField] private float CrouchSpeed = 1.0f;
-        private float CrouchCameraY = 0.19f;
-        private float StandCameraY = 0.39f;
 
         // Stun System
         [Header("Stun Settings")]
@@ -95,6 +93,7 @@ namespace StarterAssets
         // crouching
         private float _targetHeight;
         private bool _isCrouching;
+        private Vector3 _cameraDefaultLocalPos;
 
 #if ENABLE_INPUT_SYSTEM
         private PlayerInput _playerInput;
@@ -139,6 +138,11 @@ namespace StarterAssets
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
             _targetHeight = StandHeight;
+
+            if (CinemachineCameraTarget != null)
+            {
+                _cameraDefaultLocalPos = CinemachineCameraTarget.transform.localPosition;
+            }
         }
 
         public float MoveSpeedValue
@@ -200,14 +204,14 @@ namespace StarterAssets
                 _isCrouching = true;
                 _controller.height = CrouchHeight;
                 _controller.center = new Vector3(0, CrouchHeight / 2f, 0);
-                CinemachineCameraTarget.transform.localPosition = new Vector3(0, CrouchCameraY, 0.2f);
+                CinemachineCameraTarget.transform.localPosition = _cameraDefaultLocalPos - new Vector3(0f, StandHeight - CrouchHeight, 0f);
             }
             else if (!_input.crouch && _isCrouching)
             {
                 _isCrouching = false;
                 _controller.height = StandHeight;
                 _controller.center = new Vector3(0, StandCenter, 0);
-                CinemachineCameraTarget.transform.localPosition = new Vector3(0, StandCameraY, 0f);
+                CinemachineCameraTarget.transform.localPosition = _cameraDefaultLocalPos;
 
                 _input.crouch = false;
             }
@@ -281,7 +285,7 @@ namespace StarterAssets
                     if (dotIntoWall > 0f)
                     {
                         inputDirection -= pushDirection * dotIntoWall;
-                        // Don't zero it out — if they're strafing alongside, let them slide
+                        // Don't zero it out ï¿½ if they're strafing alongside, let them slide
                     }
 
                     // Kill speed only if we're heading nearly straight into it
