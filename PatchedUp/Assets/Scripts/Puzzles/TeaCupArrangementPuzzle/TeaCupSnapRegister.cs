@@ -5,35 +5,46 @@ public class TeaCupSnapRegister : MonoBehaviour
 {
     private Transform saucerLocation;
     [SerializeField] private int cupId;
+    [SerializeField] private float repickDistance = 0.3f;
     private bool isSnapped = false;
+    private Collider snappedCup;
 
     private void Start()
     {
         saucerLocation = this.transform;
     }
+    
+    private void OnTriggerEnter(Collider other) => TrySnap(other);
+    private void OnTriggerStay(Collider other) => TrySnap(other);
 
-    private void OnTriggerEnter(Collider other)
+    private void TrySnap(Collider other)
     {
-        if (other.CompareTag("TeaCup"))
-        {
-            var go = other.gameObject;
-            var script = go.GetComponent<PickableItem>();
-            script.enabled = false;
-            go.transform.position = saucerLocation.position;
-            go.transform.rotation = saucerLocation.rotation;
-            isSnapped = true;
-            TeaCupPuzzleEvents.OnSnapEvent(isSnapped, cupId);
-        }
+        if (isSnapped || !other.CompareTag("TeaCup")) return;
+        
+        Rigidbody rb = other.GetComponentInParent<Rigidbody>();
+        if (rb == null || rb.isKinematic) return;
+
+        rb.isKinematic = true;
+        rb.useGravity = false;
+        rb.transform.position = saucerLocation.position;
+        rb.transform.rotation = saucerLocation.rotation;
+
+        isSnapped = true;
+        snappedCup = other;
+        TeaCupPuzzleEvents.OnSnapEvent(true, cupId);
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("TeaCup"))
-        {
-            
-            isSnapped = false;
-            TeaCupPuzzleEvents.OnSnapEvent(isSnapped, cupId);
-        }
+        if (!isSnapped || other != snappedCup) return;
+        
+        Rigidbody rb = other.GetComponentInParent<Rigidbody>();
+        Vector3 itemPos = rb != null ? rb.position : other.transform.position;
+        if (Vector3.Distance(itemPos, saucerLocation.position) < repickDistance) return;
+
+        isSnapped = false;
+        snappedCup = null;
+        TeaCupPuzzleEvents.OnSnapEvent(false, cupId);
     }
     
     public bool GetIsSnapped()
