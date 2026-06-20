@@ -17,6 +17,8 @@ public class TeaCupSnapRegister : MonoBehaviour
         if (other.CompareTag("TeaCup"))
         {
             var go = other.gameObject;
+            var script = go.GetComponent<PickableItem>();
+            script.enabled = false;
             go.transform.position = saucerLocation.position;
             go.transform.rotation = saucerLocation.rotation;
             isSnapped = true;
@@ -28,6 +30,7 @@ public class TeaCupSnapRegister : MonoBehaviour
     {
         if (other.CompareTag("TeaCup"))
         {
+            
             isSnapped = false;
             TeaCupPuzzleEvents.OnSnapEvent(isSnapped, cupId);
         }
