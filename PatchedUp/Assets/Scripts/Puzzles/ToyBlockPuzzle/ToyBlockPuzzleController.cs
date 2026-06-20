@@ -51,7 +51,7 @@ namespace Puzzles.ToyBlockPuzzle
                     OnPuzzleCompleted();
                 }
             } 
-            if (placed >= wordToWrite.Length)
+            else if (placed >= wordToWrite.Length)
             {
                 audioSource.clip = failAudioClip;
                 audioSource.PlayOneShot(failAudioClip);
