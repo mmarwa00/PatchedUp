@@ -282,7 +282,7 @@ namespace StarterAssets
                     if (dotIntoWall > 0f)
                     {
                         inputDirection -= pushDirection * dotIntoWall;
-                        // Don't zero it out ï¿½ if they're strafing alongside, let them slide
+                        // Don't zero it out — if they're strafing alongside, let them slide
                     }
 
                     // Kill speed only if we're heading nearly straight into it

@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Audio;
 
 namespace Puzzles.ToyBlockPuzzle
@@ -9,10 +8,9 @@ namespace Puzzles.ToyBlockPuzzle
         [Header("Puzzle Settings")]
         [SerializeField] private ToyBlocks toyBlocks;
         [SerializeField] private char[] wordToWrite;
+        private int placed;
+        private int correctlyPlaced;
         
-        private readonly Dictionary<int, char> placedLetters = new Dictionary<int, char>();
-        private bool solved;
-
         [Header("Audio")]
         [SerializeField] private AudioClip audioClip;
         [SerializeField] private AudioClip failAudioClip;
@@ -21,6 +19,8 @@ namespace Puzzles.ToyBlockPuzzle
 
         private void Start()
         {
+            placed = 0;
+            correctlyPlaced = 0;
             this.audioSource = GetComponent<AudioSource>();
             audioSource.clip = audioClip;
             audioSource.outputAudioMixerGroup = audioMixerGroup;
@@ -38,39 +38,29 @@ namespace Puzzles.ToyBlockPuzzle
 
         private void HandlePlacedToyBlocks(bool isPlaced, char designatedLetter, char placedLetter, int id)
         {
-            if (solved) return;
+
+            if (isPlaced) { placed++; } else { placed--; }
             
-            if (isPlaced) placedLetters[id] = placedLetter;
-            else placedLetters.Remove(id);
+            Debug.Log(placed);
             
-            if (CountCorrect() == wordToWrite.Length)
+            if (designatedLetter == placedLetter && placedLetter == wordToWrite[id])
             {
-                OnPuzzleCompleted();
-                return;
-            }
-            
-            if (isPlaced && placedLetters.Count == wordToWrite.Length)
+                correctlyPlaced++;
+                if (correctlyPlaced == wordToWrite.Length)
+                {
+                    OnPuzzleCompleted();
+                }
+            } 
+            if (placed >= wordToWrite.Length)
             {
+                audioSource.clip = failAudioClip;
                 audioSource.PlayOneShot(failAudioClip);
             }
         }
 
-        private int CountCorrect()
-        {
-            int correct = 0;
-            foreach (KeyValuePair<int, char> slot in placedLetters)
-            {
-                if (slot.Key >= 0 && slot.Key < wordToWrite.Length && slot.Value == wordToWrite[slot.Key])
-                    correct++;
-            }
-            return correct;
-        }
-
         private void OnPuzzleCompleted()
         {
-            if (solved) return;
-            solved = true;
-
+            audioSource.clip = audioClip;
             audioSource.PlayOneShot(audioClip);
             PuzzleManager.Instance.RegisterCompletedPuzzle(true);
         }

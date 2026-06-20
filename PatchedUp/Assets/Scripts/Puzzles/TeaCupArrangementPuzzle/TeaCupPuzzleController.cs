@@ -6,7 +6,6 @@ public class TeaCupPuzzleController : MonoBehaviour
 {
     [SerializeField] private GameObject[] cups;
     private Dictionary<int, bool> cupArrangement;
-    private bool solved;
     
     [Header("Audio")]
     [SerializeField] private AudioClip audioClip;
@@ -36,8 +35,7 @@ public class TeaCupPuzzleController : MonoBehaviour
 
     private void HandleSnapEvent(bool snapState,  int cupId)
     {
-        if (solved) return;
-        cupArrangement[cupId] = snapState;
+        cupArrangement[cupId] = true;
         CheckArrangement();
     }
 
@@ -60,21 +58,7 @@ public class TeaCupPuzzleController : MonoBehaviour
 
     private void OnFinishedArrangement()
     {
-        if (solved) return;
-        solved = true;
-
         audioSource.PlayOneShot(audioClip);
-        LockCups();
         PuzzleManager.Instance.RegisterCompletedPuzzle(true);
-    }
-    
-    private void LockCups()
-    {
-        foreach (GameObject cup in cups)
-        {
-            if (cup == null) continue;
-            PickableItem pickable = cup.GetComponent<PickableItem>();
-            if (pickable != null) pickable.SetPickable(false);
-        }
     }
 }
