@@ -9,21 +9,29 @@ public class IntroController : MonoBehaviour
     public GameObject teddyPatched;
     public GameObject child;
 
+    [Header("Table Objects - Act 2 swap")]
+    public GameObject towels;
+    public GameObject towels1;
+    public GameObject singleTed;
+
     [Header("Movement")]
     public Transform walkTarget;
     public float walkSpeed = 1.5f;
 
     [Header("Fade")]
     public CanvasGroup blackPanel;
-    public float fadeOutDuration = 1.5f;
-    public float fadeInDuration = 1.5f;
+    public float fadeOutDuration = 3.0f;
+    public float fadeInDuration = 3.0f;
     public float distanceToStartFade = 1.5f;
+    public float finalFadeOutDuration = 4.0f;
 
-    [Header("Audio")]
-    public AudioSource musicSource;
-    public AudioClip cuteMusic;
-    public AudioClip eerieMusic;
-    public AudioSource footstepSource; // Attach to Child for walking sounds
+    [Header("Music timing (actual playback is handled by GlobalMusic)")]
+    public float musicCrossfadeDuration = 4.0f;
+    public float musicFinalFadeOutDuration = 4.0f;
+    public float cuteMusicStartTime = 10.0f;
+
+    [Header("Footsteps")]
+    public AudioSource footstepSource;
 
     [Header("Lighting Controls")]
     public Light directionalLight;
@@ -51,12 +59,16 @@ public class IntroController : MonoBehaviour
         teddyPatched.SetActive(false);
         blackPanel.alpha = 0f;
 
+        towels.SetActive(true);
+        towels1.SetActive(true);
+        singleTed.SetActive(false);
+
         if (directionalLight != null) { directionalLight.color = warmColor; directionalLight.intensity = warmIntensity; }
         RenderSettings.ambientLight = warmAmbient;
 
-        // Play Intro Music
-        if (musicSource != null && cuteMusic != null) { musicSource.clip = cuteMusic; musicSource.loop = true; musicSource.Play(); }
-        musicSource.time = 10.0f; // This jumps 10 seconds into the song instantly
+        if (GlobalMusic.Instance != null)
+            GlobalMusic.Instance.PlayCute(cuteMusicStartTime);
+
         var ai = child.GetComponent("ChildAI") as MonoBehaviour;
         if (ai != null) ai.enabled = false;
         var nav = child.GetComponent<UnityEngine.AI.NavMeshAgent>();
@@ -72,7 +84,6 @@ public class IntroController : MonoBehaviour
 
         child.transform.position = Vector3.MoveTowards(child.transform.position, targetPos, walkSpeed * Time.deltaTime);
 
-        // Footstep logic while moving
         if (Vector3.Distance(oldPos, child.transform.position) > 0.001f && footstepSource != null && !footstepSource.isPlaying)
             footstepSource.Play();
 
@@ -89,13 +100,20 @@ public class IntroController : MonoBehaviour
 
     private IEnumerator DoIntroSequence()
     {
-        // 1. Blackout and Music Switch
-        yield return StartCoroutine(FadeAndSwitchMusic(eerieMusic, fadeOutDuration));
+        // 1. Screen fades to black AND music crossfades to eerie, at the same time
+        if (GlobalMusic.Instance != null)
+            GlobalMusic.Instance.CrossfadeToEerie(musicCrossfadeDuration);
 
-        // 2. Teddy Swap
+        yield return StartCoroutine(FadeScreen(0f, 1f, fadeOutDuration));
+
+        // 2. Teddy Swap + Table Swap (screen is fully black now, all happens hidden)
         teddyBrown.SetActive(false);
         child.SetActive(false);
         teddyPatched.SetActive(true);
+
+        towels.SetActive(false);
+        towels1.SetActive(false);
+        singleTed.SetActive(true);
 
         Animator anim = teddyPatched.GetComponent<Animator>();
         if (anim != null) anim.speed = 0f;
@@ -104,58 +122,25 @@ public class IntroController : MonoBehaviour
 
         if (directionalLight != null) StartCoroutine(TransitionLight());
 
-        // 3. Fade back in
-        yield return StartCoroutine(Fade(1f, 0f, fadeInDuration));
+        // 3. Fade screen back in - everything above is already swapped, so it's all visible as soon as light returns
+        yield return StartCoroutine(FadeScreen(1f, 0f, fadeInDuration));
 
         if (anim != null) anim.speed = 1f;
 
-        // 4. Extend the "Horror" phase duration if you want
-        // Change the number below to make it longer or shorter before loading MainMenu
+        // 4. Hold on the horror phase
         yield return new WaitForSeconds(12.0f);
 
-        // 5. Load the MainMenu scene
-        if (musicSource != null) {
-            musicSource.Stop();
-            musicSource.clip = null;
-            Debug.Log("[IntroController] Intro-Musik erfolgreich vernichtet. Bereit für Zone 1!");
-        }
+        // 5. Fade screen to black AND fade music out, together
+        if (GlobalMusic.Instance != null)
+            GlobalMusic.Instance.FadeOutCurrent(musicFinalFadeOutDuration);
 
+        yield return StartCoroutine(FadeScreen(0f, 1f, finalFadeOutDuration));
+
+        // 6. Load next scene - screen is black and music is silent, so the cut is invisible
         SceneManager.LoadScene("zone1_greyboxing");
     }
 
-    private IEnumerator FadeAndSwitchMusic(AudioClip nextClip, float duration)
-    {
-        float elapsed = 0f;
-        float startVol = 1.0f; // Force start volume to 1.0
-
-        // 1. Fade Out
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            blackPanel.alpha = Mathf.Lerp(0f, 1f, elapsed / duration);
-            musicSource.volume = Mathf.Lerp(startVol, 0f, elapsed / duration);
-            yield return null;
-        }
-
-        // 2. Prepare the Swap
-        musicSource.Stop();
-        musicSource.clip = nextClip;
-        musicSource.volume = startVol;
-        musicSource.pitch = 1.0f;   
-        musicSource.mute = false;    
-
-        // 3. Force Play
-        musicSource.Play();
-
-        // 4. Verification Check
-        if (!musicSource.isPlaying)
-        {
-            Debug.LogWarning("AudioSource failed to start the new clip! Attempting manual override...");
-            musicSource.PlayOneShot(nextClip);
-        }
-    }
-
-    private IEnumerator Fade(float from, float to, float duration)
+    private IEnumerator FadeScreen(float from, float to, float duration)
     {
         float elapsed = 0f;
         blackPanel.alpha = from;
