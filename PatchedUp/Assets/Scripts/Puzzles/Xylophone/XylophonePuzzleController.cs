@@ -91,7 +91,7 @@ public class XylophonePuzzleController : MonoBehaviour
     private void OnFailed()
     {
         state = State.Failed;
-        successIterationAmount = 0;
+        //successIterationAmount = 0;
         playerInput.Clear();
         StartCoroutine(RestartOnFailure());
     }
