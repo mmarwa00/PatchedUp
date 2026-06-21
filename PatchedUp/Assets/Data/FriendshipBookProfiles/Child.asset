@@ -23,13 +23,16 @@ MonoBehaviour:
   - fieldLabel: Favorite Colour
     acceptedAnswers:
     - Purple
+    - Violett
     caseSensitive: 0
     trimWhitespace: 1
   - fieldLabel: Age
     acceptedAnswers:
-    - 8
-    - Eighth
-    - Eigth
+    - 7
+    - Seven
+    - seven
+    - Sieben
+    - sieben
     caseSensitive: 0
     trimWhitespace: 1
   - fieldLabel: My Mother's Name
@@ -56,21 +59,32 @@ MonoBehaviour:
     - Teddy Bear
     - Bear
     - Teddy
+    - "B\xE4r"
+    - Baer
     caseSensitive: 0
     trimWhitespace: 1
-  - fieldLabel: Placeholder
+  - fieldLabel: Favorite Movie
     acceptedAnswers:
-    - 
+    - Frozen
+    - "Eisk\xF6nigin"
+    - Eiskoenigin
+    - "Die Eisk\xF6nigin"
+    - Die Eiskoenigin
     caseSensitive: 0
     trimWhitespace: 1
-  - fieldLabel: Placeholder
+  - fieldLabel: Favorite Animal
     acceptedAnswers:
-    - 
+    - Spider
+    - Spinne
     caseSensitive: 0
     trimWhitespace: 1
-  - fieldLabel: Placeholder
+  - fieldLabel: Favorite Food
     acceptedAnswers:
-    - 
+    - Spaghetti
+    - Spagetti
+    - spageti
+    - bolognese
+    - spaghetti bolognese
     caseSensitive: 0
     trimWhitespace: 1
   rewardSticker: {fileID: 0}

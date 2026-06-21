@@ -51,7 +51,7 @@ public class ChildAI : MonoBehaviour {
     }
 
     private void Update() {
-        // SICHERHEITS-CHECK: Wenn der Agent nicht sauber auf dem Netz steht, abbrechen statt abstürzen!
+        // SICHERHEITS-CHECK: Wenn der Agent nicht sauber auf dem Netz steht, abbrechen statt abstï¿½rzen!
         if (_agent == null || !_agent.isOnNavMesh) return;
 
         _playerDetected = CanSeePlayer();
