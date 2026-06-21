@@ -7,10 +7,10 @@ using UnityEngine.Rendering.Universal;
 public class EnvironmentPuzzleController : MonoBehaviour
 {
     [Header("Player")]
-    [SerializeField] private FirstPersonController player;
+    [SerializeField] private PersonController player;
     [SerializeField] private CharacterController characterController;
     [SerializeField] private GameObject playerCapsule;
-    private FirstPersonController.PlayerMovementState expectedState;
+    private PersonController.PlayerMovementState expectedState;
     
     [Header("Light")]
     [SerializeField] private Light lamp;
@@ -123,14 +123,14 @@ public class EnvironmentPuzzleController : MonoBehaviour
         
         eventPlaying = true;
         EnvironmentPuzzleEvents.ToggleLights(lamp, lightIsOn, minIntensity, maxIntensity);
-        expectedState = FirstPersonController.PlayerMovementState.Walking;
+        expectedState = PersonController.PlayerMovementState.Walking;
         ResetGracePeriodTimer();
         lightIsOn = true;
         
         yield return new WaitForSeconds(duration);
         
         EnvironmentPuzzleEvents.ToggleLights(lamp, lightIsOn, minIntensity, maxIntensity);
-        expectedState = FirstPersonController.PlayerMovementState.Idle;
+        expectedState = PersonController.PlayerMovementState.Idle;
         ResetGracePeriodTimer();
         lightIsOn = false;
         eventPlaying = false;
@@ -140,19 +140,19 @@ public class EnvironmentPuzzleController : MonoBehaviour
     private IEnumerator SoundEvent()
     {
         Debug.Log("Sound triggered");
-        int duration = Random.Range(1, 4);
+        int duration = Random.Range(2, 5);
         
         eventPlaying = true;
         audioLocation = playerCapsule.transform.position;
         EnvironmentPuzzleEvents.EnvironmentSound(audioClip, audioMixerGroup, audioLocation, soundIsPlaying);
-        expectedState = FirstPersonController.PlayerMovementState.Sprinting;
+        expectedState = PersonController.PlayerMovementState.Sprinting;
         ResetGracePeriodTimer();
         soundIsPlaying = true;
         
         yield return new WaitForSeconds(duration);
         
         EnvironmentPuzzleEvents.EnvironmentSound(audioClip, audioMixerGroup, audioLocation, soundIsPlaying);
-        expectedState = FirstPersonController.PlayerMovementState.Idle;
+        expectedState = PersonController.PlayerMovementState.Idle;
         ResetGracePeriodTimer();
         eventPlaying = false;
         soundIsPlaying = false;
@@ -162,18 +162,18 @@ public class EnvironmentPuzzleController : MonoBehaviour
     private IEnumerator ParticleEvent()
     {
         Debug.Log("Particle triggered");
-        int duration = Random.Range(1, 4);
+        int duration = Random.Range(2, 5);
         
         eventPlaying = true;
         EnvironmentPuzzleEvents.EnvironmentParticles(particles, particleIsOn);
-        expectedState = FirstPersonController.PlayerMovementState.CrouchWalking;
+        expectedState = PersonController.PlayerMovementState.CrouchWalking;
         ResetGracePeriodTimer();
         particleIsOn = true;
         
         yield return new WaitForSeconds(duration);
         
         EnvironmentPuzzleEvents.EnvironmentParticles(particles, particleIsOn);
-        expectedState = FirstPersonController.PlayerMovementState.Idle;
+        expectedState = PersonController.PlayerMovementState.Idle;
         ResetGracePeriodTimer();
         particleIsOn = false;
         eventPlaying = false;
