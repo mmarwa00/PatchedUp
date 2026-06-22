@@ -7530,8 +7530,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChildAI
   baseWalkRange: 1.5
   openAreaWalkRange: 4
-  patrolSpeed: 1
-  chaseSpeed: 1.8
+  patrolSpeed: 0.4
+  chaseSpeed: 1
   searchWaitTime: 2.5
   sightRange: 5
   sightAngle: 90
