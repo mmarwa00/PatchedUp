@@ -15,13 +15,11 @@ public class CanvasRegistrator : MonoBehaviour
     private void Start() {
 
         if (App.Instance != null) {
-            // UI an den UIManager übergeben
             UIManager uiManager = App.Instance.GetManager<UIManager>();
             if (uiManager != null) {
                 uiManager.SetupGameCanvases(caughtCanvas, gameOverCanvas, youWonCanvas, pauseCanvas);
             }
 
-            // Inventar an den PlayerAbilityManager übergeben
             PlayerAbilityManager abilityManager = App.Instance.GetManager<PlayerAbilityManager>();
             if (abilityManager != null) {
 

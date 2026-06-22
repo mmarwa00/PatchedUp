@@ -5305,6 +5305,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FreeBowl02
       objectReference: {fileID: 0}
+    - target: {fileID: 8738785981315813082, guid: e0cd751eb70ae4bf8bdf7f8885891659, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7467,6 +7471,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4913005085238046037, guid: 259d1de4507c3624c829968c95835990, type: 3}
       insertIndex: -1
       addedObject: {fileID: 633083311}
+    - targetCorrespondingSourceObject: {fileID: 4913005085238046037, guid: 259d1de4507c3624c829968c95835990, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 633083312}
   m_SourcePrefab: {fileID: 100100000, guid: 259d1de4507c3624c829968c95835990, type: 3}
 --- !u!1 &633083306 stripped
 GameObject:
@@ -7561,6 +7568,103 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!82 &633083312
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 633083306}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: 3abb215401f38af4e84f619c4a78dd36, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &635145367
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7572,6 +7676,10 @@ PrefabInstance:
     - target: {fileID: 2756360610627481282, guid: 044f3c58650d74108a9ac96a17e43fc8, type: 3}
       propertyPath: m_Name
       value: FreePotBig (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2756360610627481282, guid: 044f3c58650d74108a9ac96a17e43fc8, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3245793456012145784, guid: 044f3c58650d74108a9ac96a17e43fc8, type: 3}
       propertyPath: m_LocalScale.x
@@ -10786,6 +10894,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FreeCup02
       objectReference: {fileID: 0}
+    - target: {fileID: 5346946685110147919, guid: c58436ee2750b4eb6b809a7790aa8124, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -13789,6 +13901,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FreePlate (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2244577606202969946, guid: ce79dbb34713241978debb72446fa860, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -15004,6 +15120,10 @@ PrefabInstance:
       value: BookPuzzle
       objectReference: {fileID: 0}
     - target: {fileID: 7199201368443164021, guid: 187d0947165053e42bc416094dab246b, type: 3}
+      propertyPath: controller
+      value: 
+      objectReference: {fileID: 886921195}
+    - target: {fileID: 7199201368443164021, guid: 187d0947165053e42bc416094dab246b, type: 3}
       propertyPath: mainCamera
       value: 
       objectReference: {fileID: 1797620478}
@@ -15177,6 +15297,17 @@ PrefabInstance:
       addedObject: {fileID: 341316651}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 187d0947165053e42bc416094dab246b, type: 3}
+--- !u!114 &886921195 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6726875898615862629, guid: 187d0947165053e42bc416094dab246b, type: 3}
+  m_PrefabInstance: {fileID: 886921194}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83e938b8f3fc44b4ac1ee7a2920dae38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProfilePuzzleController
 --- !u!1 &894177988 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 76aa03f0fc51fee4c919cdac2f4dd790, type: 3}
@@ -16163,6 +16294,10 @@ PrefabInstance:
     - target: {fileID: 7978629859881015054, guid: 4416b98c4484848b393bc467ca0845bb, type: 3}
       propertyPath: m_Name
       value: FreeSaltShaker
+      objectReference: {fileID: 0}
+    - target: {fileID: 7978629859881015054, guid: 4416b98c4484848b393bc467ca0845bb, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -25427,6 +25562,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FreePlate
       objectReference: {fileID: 0}
+    - target: {fileID: 2244577606202969946, guid: ce79dbb34713241978debb72446fa860, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -25452,6 +25591,10 @@ PrefabInstance:
     - target: {fileID: 2756360610627481282, guid: 044f3c58650d74108a9ac96a17e43fc8, type: 3}
       propertyPath: m_Name
       value: FreePotBig
+      objectReference: {fileID: 0}
+    - target: {fileID: 2756360610627481282, guid: 044f3c58650d74108a9ac96a17e43fc8, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3245793456012145784, guid: 044f3c58650d74108a9ac96a17e43fc8, type: 3}
       propertyPath: m_LocalScale.x
@@ -34078,6 +34221,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FreePlate (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 2244577606202969946, guid: ce79dbb34713241978debb72446fa860, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -36155,6 +36302,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FreePlate (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 2244577606202969946, guid: ce79dbb34713241978debb72446fa860, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -37526,6 +37677,10 @@ PrefabInstance:
     - target: {fileID: 2756360610627481282, guid: 044f3c58650d74108a9ac96a17e43fc8, type: 3}
       propertyPath: m_Name
       value: FreePotBig (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2756360610627481282, guid: 044f3c58650d74108a9ac96a17e43fc8, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3245793456012145784, guid: 044f3c58650d74108a9ac96a17e43fc8, type: 3}
       propertyPath: m_LocalScale.x

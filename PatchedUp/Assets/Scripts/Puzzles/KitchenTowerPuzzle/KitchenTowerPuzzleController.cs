@@ -20,12 +20,24 @@ namespace Puzzles.KitchenTowerPuzzle
         [Header("Events")]
         [SerializeField] private UnityEvent onPuzzleSolved;
 
-        private void Start()
-        {
+        private void Start() {
             audioSource = GetComponent<AudioSource>();
             if (audioMixerGroup != null) audioSource.outputAudioMixerGroup = audioMixerGroup;
             towerCount = towerController.Length;
         }
+
+        private bool _solved = false;
+
+        public bool CheckSolved() {
+            if (!_solved && PuzzleManager.Instance != null && PuzzleManager.Instance.IsPuzzleSolved(gameObject.name)) {
+                _solved = true;
+                onPuzzleSolved?.Invoke();
+                KitchenTowerEvents.OnPuzzleSolvedEvent();
+                Debug.Log($"[Load] {gameObject.name} war bereits gelöst!");
+            }
+            return _solved;
+        }
+
 
         private void OnEnable()
         {
@@ -39,6 +51,7 @@ namespace Puzzles.KitchenTowerPuzzle
 
         private void HandleFinishedTower(bool success, int towerId)
         {
+            if (CheckSolved()) return;
             if (success)
             {
                 if (successClip != null) audioSource.PlayOneShot(successClip);
@@ -56,7 +69,9 @@ namespace Puzzles.KitchenTowerPuzzle
         {
             onPuzzleSolved?.Invoke();
             KitchenTowerEvents.OnPuzzleSolvedEvent();
-            PuzzleManager.Instance.RegisterCompletedPuzzle(true);
+            PuzzleManager.Instance.RegisterCompletedPuzzle(gameObject.name);
+            GameManager gm = App.Instance.GetManager<GameManager>();
+            if (gm != null) gm.SaveGame();
         }
     }
 }

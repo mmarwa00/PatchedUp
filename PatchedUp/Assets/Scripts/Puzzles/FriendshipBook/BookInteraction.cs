@@ -1,6 +1,6 @@
-﻿using System;
+﻿using echo17.EndlessBook;
+using System;
 using System.Collections;
-using echo17.EndlessBook;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,7 +23,10 @@ public class BookInteraction : MonoBehaviour
     [SerializeField] private float closedToOpenFrontTime = 0.7f;
     [SerializeField] private float openFrontToOpenMiddleTime = 0.7f;
     [SerializeField] private float pageTurnTime = 0.7f;
-    
+
+    [Header("Puzzle")]
+    [SerializeField] private ProfilePuzzleController controller;
+
     // Input
     private InputActionMap playerMap;
     private InputActionMap bookMap;
@@ -59,6 +62,10 @@ public class BookInteraction : MonoBehaviour
     {
         book.SetState(EndlessBook.StateEnum.ClosedFront, 0f);
         bookUI.Hide();
+
+        if (controller != null && controller.IsSolved) {
+            // einfach nichts tun, Buch bleibt geschlossen
+        }
     }
 
     private void Update()
@@ -88,15 +95,20 @@ public class BookInteraction : MonoBehaviour
             }
         }
     }
-    
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
+
+    private void OnTriggerEnter(Collider other) {
+        if (other.CompareTag("Player")) {
+            if (controller != null && controller.CheckSolved()) return;
             mode = BookMode.InRange;
         }
     }
-    
+
+    private void OnTriggerStay(Collider other) {
+        if (other.CompareTag("Player") && mode == BookMode.OutsideRange) {
+            if (controller != null && controller.CheckSolved()) return;
+            mode = BookMode.InRange;
+        }
+    }
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player") && mode == BookMode.InRange)

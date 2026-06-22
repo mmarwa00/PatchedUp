@@ -66,6 +66,10 @@ public class App : MonoBehaviour {
             Debug.Log("[App] 'Continue'-Signal erkannt! Zwinge alle Manager zum Laden der Daten...");
             StartCoroutine(LoadAllManagersRoutine());
         }
+        else if (scene.name != "MainMenu" && SaveSystem.Load() != null) {
+            Debug.Log("[App] Save gefunden, lade Manager automatisch...");
+            StartCoroutine(LoadAllManagersRoutine());
+        }
     }
 
     private IEnumerator LoadAllManagersRoutine() {

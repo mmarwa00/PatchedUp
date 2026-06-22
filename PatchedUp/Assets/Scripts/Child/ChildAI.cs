@@ -1,3 +1,4 @@
+using GLTFast.Schema;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -6,8 +7,8 @@ public class ChildAI : MonoBehaviour {
     [Header("Patrol Settings")]
     [SerializeField] private float baseWalkRange = 1.5f;
     [SerializeField] private float openAreaWalkRange = 4.0f;
-    [SerializeField] private float patrolSpeed = 0.4f;
-    [SerializeField] private float chaseSpeed = 1f;
+    [SerializeField] private float patrolSpeed = 0.2f;
+    [SerializeField] private float chaseSpeed = 0.5f;
     [SerializeField] private float searchWaitTime = 2.5f;
 
     private Vector3 _destPoint;
@@ -29,6 +30,9 @@ public class ChildAI : MonoBehaviour {
     private Animator animator;
     private bool _playerDetected = false;
 
+    private bool _isPaused = false;
+
+    private float _smoothedAnimSpeed = 1f;
     private void Awake() {
         Debug.Log("Kind ist aufgewacht und lebt!");
     }
@@ -41,7 +45,6 @@ public class ChildAI : MonoBehaviour {
         }
         animator = GetComponentInChildren<Animator>();
 
-        // RETTUNG: Zwingt den Agenten beim Starten, sich fest auf das NavMesh zu saugen
         if (_agent != null) {
             if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2.0f, NavMesh.AllAreas)) {
                 _agent.Warp(hit.position);
@@ -51,8 +54,8 @@ public class ChildAI : MonoBehaviour {
     }
 
     private void Update() {
-        // SICHERHEITS-CHECK: Wenn der Agent nicht sauber auf dem Netz steht, abbrechen statt abst�rzen!
         if (_agent == null || !_agent.isOnNavMesh) return;
+        if (_isPaused) return;
 
         _playerDetected = CanSeePlayer();
 
@@ -66,8 +69,29 @@ public class ChildAI : MonoBehaviour {
         }
 
         if (animator != null) {
-            bool IsWalking = _agent.velocity.magnitude > 0.1f;
-            animator.SetBool("IsWalking", IsWalking);
+            float speed = _agent.velocity.magnitude;
+            bool isWalking = speed > 0.1f;
+            animator.SetBool("IsWalking", isWalking);
+
+            float targetAnimSpeed = isWalking ? Mathf.Clamp(speed / patrolSpeed, 0.2f, 2f) : 1f;
+
+            if (!isWalking && animator.GetCurrentAnimatorStateInfo(0).IsName("Walking")) {
+                targetAnimSpeed = 0.2f;
+            }
+
+            _smoothedAnimSpeed = Mathf.Lerp(_smoothedAnimSpeed, targetAnimSpeed, Time.deltaTime * 8f);
+            animator.speed = _smoothedAnimSpeed;
+        }
+
+    }
+
+    public void SetPaused(bool paused) {
+        _isPaused = paused;
+        if (_agent != null && _agent.isOnNavMesh) {
+            _agent.isStopped = paused;
+        }
+        if (animator != null) {
+            animator.speed = paused ? 0f : 1f;
         }
     }
 
@@ -114,7 +138,6 @@ public class ChildAI : MonoBehaviour {
     private void Patrol() {
         _agent.speed = patrolSpeed;
 
-        // Wenn wir gerade am Punkt stehen und uns "umschauen"
         if (_isSearchingAtPoint) {
             _waitTimer += Time.deltaTime;
 

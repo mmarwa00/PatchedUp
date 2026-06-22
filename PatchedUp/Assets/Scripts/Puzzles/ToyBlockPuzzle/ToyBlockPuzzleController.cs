@@ -19,13 +19,19 @@ namespace Puzzles.ToyBlockPuzzle
         private AudioSource audioSource;
         [SerializeField] private AudioMixerGroup audioMixerGroup;
 
-        private void Start()
-        {
+        private void Start() {
             this.audioSource = GetComponent<AudioSource>();
             audioSource.clip = audioClip;
             audioSource.outputAudioMixerGroup = audioMixerGroup;
         }
 
+        public bool CheckSolved() {
+            if (!solved && PuzzleManager.Instance != null && PuzzleManager.Instance.IsPuzzleSolved(gameObject.name)) {
+                solved = true;
+                Debug.Log($"[Load] {gameObject.name} war bereits gelöst!");
+            }
+            return solved;
+        }
         private void OnEnable()
         {
             ToyBlockPuzzleEvents.OnBlockPlaced += HandlePlacedToyBlocks;
@@ -38,8 +44,8 @@ namespace Puzzles.ToyBlockPuzzle
 
         private void HandlePlacedToyBlocks(bool isPlaced, char designatedLetter, char placedLetter, int id)
         {
-            if (solved) return;
-            
+            if (CheckSolved()) return;
+
             if (isPlaced) placedLetters[id] = placedLetter;
             else placedLetters.Remove(id);
             
@@ -72,7 +78,9 @@ namespace Puzzles.ToyBlockPuzzle
             solved = true;
 
             audioSource.PlayOneShot(audioClip);
-            PuzzleManager.Instance.RegisterCompletedPuzzle(true);
+            PuzzleManager.Instance.RegisterCompletedPuzzle(gameObject.name);
+            GameManager gm = App.Instance.GetManager<GameManager>();
+            if (gm != null) gm.SaveGame();
         }
     }
 }

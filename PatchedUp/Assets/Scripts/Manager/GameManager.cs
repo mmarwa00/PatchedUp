@@ -191,7 +191,7 @@ public class GameManager : ManagerBase {
 
         PuzzleManager puzzleManager = App.Instance.GetManager<PuzzleManager>();
         if (puzzleManager != null) {
-            //dataToSave.solvedPuzzleIds = puzzleManager.GetSolvedPuzzleIds();
+            dataToSave.solvedPuzzleIds = puzzleManager.GetSolvedPuzzleIds();
             dataToSave.solvedPuzzlesCount = puzzleManager.GetCompletedPuzzleCount();
             Debug.Log($"[GameManager] {dataToSave.solvedPuzzlesCount} gelöste Puzzles gespeichert!");
         }
@@ -204,7 +204,7 @@ public class GameManager : ManagerBase {
             dataToSave.posZ = currentPos.z;
             Debug.Log($"[GameManager] Speicher Position: X:{dataToSave.posX}, Y:{dataToSave.posY}");
 
-            // Inventory direkt vom Player holen, nicht über App-Manager!
+            // Inventory direkt vom Player holen
             PlayerInventory inventory = player.GetComponent<PlayerInventory>();
             if (inventory != null && inventory.ItemsInBag != null) {
                 dataToSave.collectedAbilityNames.Clear();
