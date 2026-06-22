@@ -58,24 +58,84 @@ namespace DoorScript
         [Header("Winkel-Einstellungen")]
         [SerializeField] private float doorSpaltAngle = -15.0f; // Der Standard-Spalt (leicht offen)
         [SerializeField] private float doorFullOpenAngle = -90.0f; // Ganz offen, wenn der Gegner kommt
+        [SerializeField] private float doorClosedAngle = 0.0f; // Komplett geschlossen (verriegelt)
+
+        [Header("Puzzle-Sperre")]
+        [SerializeField] private bool lockedUntilPuzzlesComplete = true;
 
         [Header("Geschwindigkeit & Sound")]
         public float smooth = 1.0f;
         public AudioSource asource;
         public AudioClip openDoor, closeDoor;
 
+        private bool isUnlocked;
+        private bool subscribedToPuzzleManager;
+
         void Start()
         {
             asource = GetComponent<AudioSource>();
+            
+            if (!lockedUntilPuzzlesComplete)
+            {
+                isUnlocked = true;
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (subscribedToPuzzleManager && PuzzleManager.Instance != null)
+            {
+                PuzzleManager.Instance.OnAllPuzzlesCompleted -= Unlock;
+            }
         }
 
         void Update()
         {
-            // Wenn der Enemy da ist, rotiere zum ganz offenen Winkel, sonst halte den Spalt
+            if (!isUnlocked)
+            {
+                LinkToPuzzleManager();
+
+                Quaternion closedRotation = Quaternion.Euler(0, doorClosedAngle, 0);
+                transform.localRotation = Quaternion.Slerp(transform.localRotation, closedRotation, Time.deltaTime * 5 * smooth);
+                return;
+            }
+
+            // Entriegelt: Originalverhalten – ganz offen für den Gegner, sonst nur ein Spalt.
             float targetAngle = enemyInside ? doorFullOpenAngle : doorSpaltAngle;
 
             Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
             transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime * 5 * smooth);
+        }
+
+        private void LinkToPuzzleManager()
+        {
+            PuzzleManager pm = PuzzleManager.Instance;
+            if (pm == null) return;
+
+            if (!subscribedToPuzzleManager)
+            {
+                pm.OnAllPuzzlesCompleted += Unlock;
+                subscribedToPuzzleManager = true;
+            }
+            
+            if (pm.AllPuzzlesCompleted)
+            {
+                Unlock();
+            }
+        }
+        
+        public void Unlock()
+        {
+            if (isUnlocked) return;
+            isUnlocked = true;
+
+            if (asource != null && openDoor != null)
+            {
+                asource.clip = openDoor;
+                asource.Play();
+            }
+
+            Debug.Log("[Door] Puzzle-Bedingung erfüllt, Tür entriegelt.");
         }
 
         // Diese Funktion kannst du von deinem Trigger oder Gegner-Skript aus aufrufen
