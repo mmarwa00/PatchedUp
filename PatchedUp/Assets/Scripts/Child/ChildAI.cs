@@ -6,8 +6,8 @@ public class ChildAI : MonoBehaviour {
     [Header("Patrol Settings")]
     [SerializeField] private float baseWalkRange = 1.5f;
     [SerializeField] private float openAreaWalkRange = 4.0f;
-    [SerializeField] private float patrolSpeed = 1.0f;
-    [SerializeField] private float chaseSpeed = 1.8f;
+    [SerializeField] private float patrolSpeed = 0.4f;
+    [SerializeField] private float chaseSpeed = 1f;
     [SerializeField] private float searchWaitTime = 2.5f;
 
     private Vector3 _destPoint;
