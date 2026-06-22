@@ -14,7 +14,7 @@ public class AbilityItem : MonoBehaviour, IPickable {
         _rb = GetComponent<Rigidbody>();
     }
 
-    public string GetHintText() => $"[E] Take {abilityName}";
+    public string GetHintText() => $"[E] Collect {abilityName}";
 
     public void Interact() {
         Debug.Log($"[AbilityItem] Interact ausgeführt für: {abilityName}");
