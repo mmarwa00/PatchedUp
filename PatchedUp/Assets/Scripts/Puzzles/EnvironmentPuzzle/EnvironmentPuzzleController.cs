@@ -188,6 +188,15 @@ public class EnvironmentPuzzleController : MonoBehaviour
             StopCoroutine(CheckPlayerInput());
             StopCoroutine(RunPuzzle());
             EnvironmentPuzzleEvents.PuzzleSuccess(puzzleSuccessClip, audioMixerGroup, audioLocation);
+
+            var ui = App.Instance.GetManager<UIManager>();
+            if (ui != null) {
+                ui.ShowYouWonScreen(true);
+            }
+
+            if (PuzzleManager.Instance != null) {
+                PuzzleManager.Instance.RegisterReachedGameEnd(true);
+            }
         }
         
     }

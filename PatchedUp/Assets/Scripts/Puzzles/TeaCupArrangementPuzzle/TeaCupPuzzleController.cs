@@ -12,17 +12,24 @@ public class TeaCupPuzzleController : MonoBehaviour
     [SerializeField] private AudioClip audioClip;
     [SerializeField] private AudioMixerGroup audioMixerGroup;
     private AudioSource audioSource;
-    
 
-    private void Start()
-    {
+
+    private void Start() {
         audioSource = GetComponent<AudioSource>();
         cupArrangement = new Dictionary<int, bool>();
-        int cupAmount =  cups.Length;
-        for (int i = 0; i < cupAmount; i++)
-        {
+        int cupAmount = cups.Length;
+        for (int i = 0; i < cupAmount; i++) {
             cupArrangement.Add(i, false);
         }
+    }
+
+    public bool CheckSolved() {
+        if (!solved && PuzzleManager.Instance != null && PuzzleManager.Instance.IsPuzzleSolved(gameObject.name)) {
+            solved = true;
+            LockCups();
+            Debug.Log($"[Load] {gameObject.name} war bereits gelöst!");
+        }
+        return solved;
     }
     private void OnEnable()
     {
@@ -36,7 +43,7 @@ public class TeaCupPuzzleController : MonoBehaviour
 
     private void HandleSnapEvent(bool snapState,  int cupId)
     {
-        if (solved) return;
+        if (CheckSolved()) return;
         cupArrangement[cupId] = snapState;
         CheckArrangement();
     }
@@ -65,7 +72,9 @@ public class TeaCupPuzzleController : MonoBehaviour
 
         audioSource.PlayOneShot(audioClip);
         LockCups();
-        PuzzleManager.Instance.RegisterCompletedPuzzle(true);
+        PuzzleManager.Instance.RegisterCompletedPuzzle(gameObject.name);
+        GameManager gm = App.Instance.GetManager<GameManager>();
+        if (gm != null) gm.SaveGame();
     }
     
     private void LockCups()

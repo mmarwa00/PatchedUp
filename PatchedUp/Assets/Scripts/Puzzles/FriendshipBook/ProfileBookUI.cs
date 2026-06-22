@@ -40,7 +40,11 @@ public class ProfileBookUI : MonoBehaviour
         
         RestoreSavedState();
         canvasRoot.SetActive(true);
-        
+
+        foreach (var child in UnityEngine.Object.FindObjectsByType<ChildAI>(FindObjectsSortMode.None)) {
+            child.SetPaused(true);
+        }
+
         // Focus the first non-validated field for keyboard flow
         FocusFirstUnvalidatedField();
     }
@@ -49,6 +53,10 @@ public class ProfileBookUI : MonoBehaviour
     {
         SaveCurrentInputsToController();
         canvasRoot.SetActive(false);
+
+        foreach (var child in UnityEngine.Object.FindObjectsByType<ChildAI>(FindObjectsSortMode.None)) {
+            child.SetPaused(false);
+        }
     }
     
     private void InitializeFromConfig()

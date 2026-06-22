@@ -188,6 +188,13 @@ public class PlayerAbilityManager : ManagerBase {
         }
     }
 
+    public string GetCurrentAbilityName() {
+        if (playerInventory == null || _currentSelectedSlot == -1) return "Normal";
+        var items = playerInventory.ItemsInBag;
+        if (items.Count > _currentSelectedSlot && items[_currentSelectedSlot] != null)
+            return items[_currentSelectedSlot].AbilityName;
+        return "Normal";
+    }
     public void OnItemPickedUp() {
         var items = playerInventory.ItemsInBag;
 

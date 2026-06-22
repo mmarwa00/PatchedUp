@@ -8,7 +8,7 @@ public class HookAbility : AbilityItem {
     [SerializeField] private LayerMask pullableLayers;
     [SerializeField] private Transform handPosition;
 
-    private bool _isPulling = false;
+    private static bool _isPulling = false;
 
     public override void UseAbility(Camera mainCamera) {
         if (_isPulling) return;
@@ -47,32 +47,23 @@ public class HookAbility : AbilityItem {
     }
 
     private IEnumerator PullObject(Rigidbody targetRb) {
-        Debug.Log("[Hook] PullObject Coroutine gestartet!"); 
         _isPulling = true;
         targetRb.useGravity = false;
-
-        Vector3 targetPos = handPosition != null ? handPosition.position : transform.position;
         float stopDistance = 0.05f;
 
-        Debug.Log($"[Hook] targetPos={targetPos}, handPosition null? {handPosition == null}, aktuelle Distanz={Vector3.Distance(targetRb.position, targetPos)}"); 
+        while (targetRb != null && Vector3.Distance(targetRb.position,
+            handPosition != null ? handPosition.position : transform.position) > stopDistance) {
 
-        while (targetRb != null && Vector3.Distance(targetRb.position, targetPos) > stopDistance) {
-            targetPos = handPosition != null ? handPosition.position : transform.position;
-
+            Vector3 targetPos = handPosition != null ? handPosition.position : transform.position;
             Vector3 direction = (targetPos - targetRb.position).normalized;
             targetRb.linearVelocity = direction * pullSpeed;
-            Debug.Log($"[Hook] Ziehe... aktuelle Distanz={Vector3.Distance(targetRb.position, targetPos)}");
-
             yield return null;
         }
-
-        Debug.Log("[Hook] PullObject Coroutine beendet!"); 
 
         if (targetRb != null) {
             targetRb.linearVelocity = Vector3.zero;
             targetRb.useGravity = true;
         }
-
         _isPulling = false;
     }
 }

@@ -300,7 +300,7 @@
                     "name": "",
                     "id": "adde4775-59d3-4ada-ac12-a7dfdbf9ec0c",
                     "path": "<Keyboard>/f",
-                    "interactions": "",
+                    "interactions": "Press",
                     "processors": "",
                     "groups": ";KeyboardMouse",
                     "action": "UseAbility",

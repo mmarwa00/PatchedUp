@@ -27,7 +27,15 @@ public class ProfilePuzzleController : MonoBehaviour
         
         if (rewardSticker != null) rewardSticker.SetActive(false);
     }
-    
+
+    public bool CheckSolved() {
+        if (!isSolved && PuzzleManager.Instance != null && PuzzleManager.Instance.IsPuzzleSolved(gameObject.name)) {
+            isSolved = true;
+            if (rewardSticker != null) rewardSticker.SetActive(true);
+            for (int i = 0; i < fieldValidated.Length; i++) fieldValidated[i] = true;
+        }
+        return isSolved;
+    }
     public string GetSavedAnswer(int index) => savedAnswers[index];
     public bool IsFieldValidated(int index) => fieldValidated[index];
     
@@ -91,7 +99,10 @@ public class ProfilePuzzleController : MonoBehaviour
         if (rewardSticker != null) rewardSticker.SetActive(true);
         if (audioSource != null && config.rewardSound != null)
             audioSource.PlayOneShot(config.rewardSound);
-        PuzzleManager.Instance.RegisterCompletedPuzzle(true);
+        PuzzleManager.Instance.RegisterCompletedPuzzle(gameObject.name);
+
+        GameManager gm = App.Instance.GetManager<GameManager>();
+        if (gm != null) gm.SaveGame();
     }
     
     public struct SubmitResult

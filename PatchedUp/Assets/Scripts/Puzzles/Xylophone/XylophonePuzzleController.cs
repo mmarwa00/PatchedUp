@@ -27,12 +27,27 @@ public class XylophonePuzzleController : MonoBehaviour
     private InputAction interactAction;
     private bool puzzleIsRunning;
 
-    void Start()
-    {
+    void Start() {
         this.interactAction = InputSystem.actions.FindAction("Interact");
         targetSequence = melodyConfig.GetSequence();
         successIterationAmount = 0;
         puzzleIsRunning = false;
+    }
+
+    private bool CheckSolved() {
+        if (!puzzleIsRunning && PuzzleManager.Instance != null && PuzzleManager.Instance.IsPuzzleSolved(gameObject.name)) {
+            puzzleIsRunning = true;
+            Debug.Log($"[Load] {gameObject.name} war bereits gelöst!");
+        }
+        return puzzleIsRunning;
+    }
+
+    private void OnTriggerStay(Collider other) {
+        if (other.CompareTag("Player") && this.interactAction.WasPressedThisFrame()) {
+            if (CheckSolved()) return;
+            StartCoroutine(WaitThenStart());
+            puzzleIsRunning = true;
+        }
     }
 
     void OnEnable()
@@ -133,16 +148,6 @@ public class XylophonePuzzleController : MonoBehaviour
         StartCoroutine(PlayPuzzleMelody());
     }
 
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.CompareTag("Player") && this.interactAction.WasPressedThisFrame())
-        {
-            if(puzzleIsRunning) return;
-            StartCoroutine(WaitThenStart());
-            puzzleIsRunning = true;
-        }
-    }
-
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -156,6 +161,8 @@ public class XylophonePuzzleController : MonoBehaviour
     private void PuzzleComplete()
     {
         Debug.Log("Puzzle Complete");
-        PuzzleManager.Instance.RegisterCompletedPuzzle(true);
+        PuzzleManager.Instance.RegisterCompletedPuzzle(gameObject.name);
+        GameManager gm = App.Instance.GetManager<GameManager>();
+        if (gm != null) gm.SaveGame();
     }
 }
