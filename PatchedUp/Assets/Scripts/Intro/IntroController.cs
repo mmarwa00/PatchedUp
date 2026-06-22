@@ -137,7 +137,7 @@ public class IntroController : MonoBehaviour
         yield return StartCoroutine(FadeScreen(0f, 1f, finalFadeOutDuration));
 
         // 6. Load next scene - screen is black and music is silent, so the cut is invisible
-        SceneManager.LoadScene("zone1_greyboxing");
+        SceneManager.LoadScene("StoryScene");
     }
 
     private IEnumerator FadeScreen(float from, float to, float duration)
