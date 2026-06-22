@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using UnityEditor.Overlays;
 using UnityEngine;
 
 public static class SaveSystem {
@@ -11,7 +10,7 @@ public static class SaveSystem {
 
     public static void Save(SaveData data) {
         if (data == null) {
-            Debug.LogWarning("[SaveSystem] Tried to save null data – ignored.");
+            Debug.LogWarning("[SaveSystem] Tried to save null data ï¿½ ignored.");
             return;
         }
 

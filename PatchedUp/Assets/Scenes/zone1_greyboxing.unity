@@ -2742,7 +2742,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6266977130257605666, guid: 9e766ac99d061c342820c197b4b4071a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.115125895
+      value: -0.128
       objectReference: {fileID: 0}
     - target: {fileID: 6266977130257605666, guid: 9e766ac99d061c342820c197b4b4071a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3243,8 +3243,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.0027847998, y: 0.0042157155, z: 0.00725793}
-  m_Center: {x: -0.0022887185, y: 0.0006200927, z: -0.003628964}
+  m_Size: {x: 0.003978224, y: 0.009033877, z: 0.0075218882}
+  m_Center: {x: -0.0020117534, y: 0.0006077995, z: -0.003496995}
 --- !u!4 &310272979 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 76aa03f0fc51fee4c919cdac2f4dd790, type: 3}
@@ -7530,8 +7530,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChildAI
   baseWalkRange: 1.5
   openAreaWalkRange: 4
-  patrolSpeed: 1
-  chaseSpeed: 1.8
+  patrolSpeed: 0.4
+  chaseSpeed: 1
   searchWaitTime: 2.5
   sightRange: 5
   sightAngle: 90
@@ -8759,6 +8759,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::climbing
   climbSpeed: 1
+  exitOffsetUp: 0.1
+  exitOffsetForward: 0.15
   climbingPinName: Pin
 --- !u!143 &693254222 stripped
 CharacterController:
@@ -10996,7 +10998,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3643541651916789028, guid: 436933265c6430c4c9e7ea3760adef03, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.04404998
+      value: -0.079
       objectReference: {fileID: 0}
     - target: {fileID: 3643541651916789028, guid: 436933265c6430c4c9e7ea3760adef03, type: 3}
       propertyPath: m_LocalPosition.z
@@ -13717,8 +13719,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.0026690995, y: 0.0038122647, z: 0.0069346325}
-  m_Center: {x: -0.0023465697, y: 0.0008218174, z: -0.003467316}
+  m_Size: {x: 0.0032403758, y: 0.0047987327, z: 0.007535232}
+  m_Center: {x: -0.002032366, y: 0.00083796977, z: -0.0031670278}
 --- !u!1001 &841605416
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15220,8 +15222,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.0029986133, y: 0.003594714, z: 0.006934631}
-  m_Center: {x: -0.002128131, y: 0.0009305915, z: -0.0034673153}
+  m_Size: {x: 0.0058046984, y: 0.0073278463, z: 0.007811396}
+  m_Center: {x: -0.0017128966, y: 0.00096135074, z: -0.0030289353}
 --- !u!1001 &895405234
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27492,7 +27494,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3643541651916789028, guid: 436933265c6430c4c9e7ea3760adef03, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.04404998
+      value: -0.069
       objectReference: {fileID: 0}
     - target: {fileID: 3643541651916789028, guid: 436933265c6430c4c9e7ea3760adef03, type: 3}
       propertyPath: m_LocalPosition.z
@@ -40219,7 +40221,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3662443050492038148, guid: 66c9c94059f6fcf4c96d5f027095adb6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.09044993
+      value: -0.141
       objectReference: {fileID: 0}
     - target: {fileID: 3662443050492038148, guid: 66c9c94059f6fcf4c96d5f027095adb6, type: 3}
       propertyPath: m_LocalPosition.z
