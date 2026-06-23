@@ -40,17 +40,31 @@
             ToyBlockPuzzleEvents.BlockPlacedEvent(true, designatedLetter, toy.GetBlockLetter(), locationId);
         }
 
-        private void OnTriggerExit(Collider other)
+        // The slot self-heals: rather than relying on a single OnTriggerExit event (which could fire
+        // while the block was still within repickDistance and strand the slot as permanently occupied),
+        // we poll the snapped block here. A pinned block sits exactly at placementLocation, so it never
+        // releases by accident; once it has been picked up and moved away, the slot frees reliably.
+        private void Update()
         {
-            if (!isSnapped || other != snappedBlock) return;
-            
-            Rigidbody rb = other.GetComponentInParent<Rigidbody>();
-            Vector3 itemPos = rb != null ? rb.position : other.transform.position;
-            if (Vector3.Distance(itemPos, placementLocation.position) < repickDistance) return;
+            if (!isSnapped) return;
 
-            ToyBlock toy = other.GetComponentInParent<ToyBlock>();
-            char blockLetter = toy != null ? toy.GetBlockLetter() : default;
+            if (snappedBlock == null)
+            {
+                Release(default);
+                return;
+            }
 
+            Rigidbody rb = snappedBlock.GetComponentInParent<Rigidbody>();
+            Vector3 itemPos = rb != null ? rb.position : snappedBlock.transform.position;
+            if (Vector3.Distance(itemPos, placementLocation.position) > repickDistance)
+            {
+                ToyBlock toy = snappedBlock.GetComponentInParent<ToyBlock>();
+                Release(toy != null ? toy.GetBlockLetter() : default);
+            }
+        }
+
+        private void Release(char blockLetter)
+        {
             isSnapped = false;
             snappedBlock = null;
             ToyBlockPuzzleEvents.BlockPlacedEvent(false, designatedLetter, blockLetter, locationId);
