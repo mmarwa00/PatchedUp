@@ -7627,6 +7627,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   captureDistance: 0.3
+  footsteps: {fileID: 633083312}
+  hearingRange: 8
+  maxVolume: 1
 --- !u!95 &633083311
 Animator:
   serializedVersion: 7
@@ -7662,7 +7665,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 3abb215401f38af4e84f619c4a78dd36, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.19
   m_Pitch: 1
   Loop: 1
   Mute: 0

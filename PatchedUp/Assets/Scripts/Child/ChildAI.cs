@@ -33,6 +33,11 @@ public class ChildAI : MonoBehaviour {
     private bool _isPaused = false;
 
     private float _smoothedAnimSpeed = 1f;
+
+    [Header("Proximity Sound")]
+    [SerializeField] private AudioSource footsteps;
+    [SerializeField] private float hearingRange = 8f;
+    [SerializeField] private float maxVolume = 1f;
     private void Awake() {
         Debug.Log("Kind ist aufgewacht und lebt!");
     }
@@ -81,6 +86,24 @@ public class ChildAI : MonoBehaviour {
 
             _smoothedAnimSpeed = Mathf.Lerp(_smoothedAnimSpeed, targetAnimSpeed, Time.deltaTime * 8f);
             animator.speed = _smoothedAnimSpeed;
+        }
+
+        if (footsteps != null && _player != null) {
+            float dist = Vector3.Distance(transform.position, _player.transform.position);
+
+            if (dist <= hearingRange) {
+                float volume = 1f - (dist / hearingRange);
+                footsteps.volume = Mathf.Clamp01(volume * maxVolume);
+
+                if (!footsteps.isPlaying) {
+                    footsteps.Play();
+                }
+            }
+            else {
+                if (footsteps.isPlaying) {
+                    footsteps.Stop();
+                }
+            }
         }
 
     }
